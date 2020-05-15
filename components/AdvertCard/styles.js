@@ -3,22 +3,22 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     listItemContainer: {
-        backgroundColor: 'lightgrey',
+        backgroundColor: 'white',
         borderStyle: 'solid',
-        borderColor: 'grey',
-        borderBottomWidth: 2,
+        borderColor: 'lightgrey',
+        borderBottomWidth: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 20
+        padding: 15
     },
-    pokeItemHeader: {  
+    pokeItemHeader: {
         color: 'grey',
         fontSize: 24,
     },
     pokeImage: {
         backgroundColor: 'transparent',
-        height: 50,
-        width: 50
+        height: 40,
+        width: 40
     }
 })
 

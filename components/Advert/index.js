@@ -1,4 +1,4 @@
-import React, { PureComponent, useState, useEffect } from 'react';
+import React, { PureComponent} from 'react';
 //import UI from react-native
 import { View, Text, Image, ActivityIndicator } from 'react-native';
 //import styles for component.

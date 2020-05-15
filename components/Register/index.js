@@ -6,7 +6,7 @@ import { Button, Provider, Toast, InputItem } from '@ant-design/react-native';
 //import styles for component
 import styles from './styles';
 
-class Home extends PureComponent {
+class Register extends PureComponent {
     constructor(props) {
         super(props);
     }
@@ -29,11 +29,7 @@ class Home extends PureComponent {
                     </InputItem>
                     <Button
                         onPress={() => this.props.navigation.navigate('AdvertList')}
-                    >Login</Button>
-                    <Text
-                        onPress={() => this.props.navigation.navigate('Register')}
-                        style={styles.register}
-                    >Register</Text>
+                    >Kayıt Ol</Button>
 
                 </View>
             </Provider>
@@ -44,4 +40,4 @@ class Home extends PureComponent {
 
 
 //Export the statelesss component as a default export 
-export default Home;
+export default Register;

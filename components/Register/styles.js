@@ -36,10 +36,6 @@ const styles = StyleSheet.create({
                 fontFamily: 'monospace'
             }
         })
-    },
-    register: {
-        textAlign: "center",
-        marginTop: 30
     }
 })
 //Export your styles
