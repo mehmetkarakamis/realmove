@@ -3,7 +3,14 @@ nice commit
 
 # To run RN app
 cd realmove
-yarn install
-npx react-native run-ios
+npm i
+pod install
+npx react-native start
+
+on another terminal
+
+npx react-native run-ios 
+or
+npx react-native run-ios 
 
 <3 
