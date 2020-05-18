@@ -1224,6 +1224,10 @@
         "source": "/home/mehmet/.gradle/caches/transforms-2/files-2.1/7b4521e09033db39989053c4a0984cc2/material-1.1.0/res/color/mtrl_popupmenu_overlay_color.xml"
     },
     {
+        "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/layout_list_item.xml.flat",
+        "source": "/home/mehmet/Desktop/realmove/front-end/node_modules/react-native-image-picker/android/build/intermediates/packaged_res/debug/layout/list_item.xml"
+    },
+    {
         "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/drawable-hdpi-v4_notification_bg_normal.9.png.flat",
         "source": "/home/mehmet/.gradle/caches/transforms-2/files-2.1/4f509a65121478d6153615d7ef5b7c5f/core-1.1.0/res/drawable-hdpi-v4/notification_bg_normal.9.png"
     },
@@ -1772,12 +1776,12 @@
         "source": "/home/mehmet/.gradle/caches/transforms-2/files-2.1/2b7e6ebaa515cd43f42fb356f0d1941c/appcompat-1.1.0/res/drawable-ldrtl-mdpi-v17/abc_ic_menu_cut_mtrl_alpha.png"
     },
     {
-        "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/color_mtrl_chip_close_icon_tint.xml.flat",
-        "source": "/home/mehmet/.gradle/caches/transforms-2/files-2.1/7b4521e09033db39989053c4a0984cc2/material-1.1.0/res/color/mtrl_chip_close_icon_tint.xml"
-    },
-    {
         "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/layout_mtrl_calendar_month_labeled.xml.flat",
         "source": "/home/mehmet/.gradle/caches/transforms-2/files-2.1/7b4521e09033db39989053c4a0984cc2/material-1.1.0/res/layout/mtrl_calendar_month_labeled.xml"
+    },
+    {
+        "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/color_mtrl_chip_close_icon_tint.xml.flat",
+        "source": "/home/mehmet/.gradle/caches/transforms-2/files-2.1/7b4521e09033db39989053c4a0984cc2/material-1.1.0/res/color/mtrl_chip_close_icon_tint.xml"
     },
     {
         "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/anim_abc_slide_out_bottom.xml.flat",
@@ -2526,6 +2530,10 @@
     {
         "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/drawable-hdpi-v4_abc_ic_star_half_black_48dp.png.flat",
         "source": "/home/mehmet/.gradle/caches/transforms-2/files-2.1/2b7e6ebaa515cd43f42fb356f0d1941c/appcompat-1.1.0/res/drawable-hdpi-v4/abc_ic_star_half_black_48dp.png"
+    },
+    {
+        "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/xml_provider_paths.xml.flat",
+        "source": "/home/mehmet/Desktop/realmove/front-end/node_modules/react-native-image-picker/android/build/intermediates/packaged_res/debug/xml/provider_paths.xml"
     },
     {
         "merged": "/home/mehmet/Desktop/realmove/front-end/android/app/build/intermediates/res/merged/debug/drawable-xxxhdpi-v4_abc_btn_radio_to_on_mtrl_000.png.flat",
