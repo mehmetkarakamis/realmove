@@ -30,7 +30,7 @@ export default class AdvertList extends React.PureComponent {
 
     closeControlPanel = () => {
         this._drawer.close();
-      };
+    };
 
     openControlPanel = () => {
         this._drawer.open();
@@ -38,14 +38,14 @@ export default class AdvertList extends React.PureComponent {
 
     renderThumbnails = () => {
         let render = [];
-        for(let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {
             render.push(
                 <ImageBackground
                     source={{ uri: Adverts[i].thumbnail }}
-                    style={{ display: "flex", alignItems:"center", justifyContent: "center", height: 200, width: "100%" }}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200, width: "100%" }}
                     key={i}
                 >
-                    <Text style={{ fontWeight: "bold", fontSize: 13, padding: 10, borderRadius: 15, backgroundColor: "rgba(255,255,255,0.6)", width:"50%" }}>{Adverts[i].name}</Text>
+                    <Text style={{ fontWeight: "bold", fontSize: 13, padding: 10, borderRadius: 15, backgroundColor: "rgba(255,255,255,0.6)", width: "50%" }}>{Adverts[i].name}</Text>
                 </ImageBackground>
             );
         }
@@ -101,8 +101,8 @@ export default class AdvertList extends React.PureComponent {
                         </Carousel>
                         <View style={{ margin: 10, display: "flex", alignItems: "center", flexDirection: "row" }}>
                             <Text style={styles.title}>Tüm İlanlar</Text>
-                            <Button onPress={() => this.props.navigation.navigate("Map")} style={{ marginRight: 10}}>Harita</Button>
-                            <Button type="primary" onPress={() => this.openControlPanel() }>Yeni Ekle</Button>
+                            <Button onPress={() => this.props.navigation.navigate("Map")} style={{ marginRight: 10 }} navigation={navigation}>Harita</Button>
+                            <Button type="primary" onPress={() => this.openControlPanel()}>Yeni Ekle</Button>
                         </View>
 
                         <FlatList
@@ -110,8 +110,8 @@ export default class AdvertList extends React.PureComponent {
                             renderItem={(data) => <AdvertCard {...data.item} navigation={navigation} />}
                             keyExtractor={(item) => item.id}
                         /></View>
-                    </Drawer>
-                );
+                </Drawer>
+            );
         } else {
             return <ActivityIndicator />
         }

@@ -3,7 +3,11 @@ import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
-  Dimensions
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  Image
 } from 'react-native';
 
 import MapView, { Marker } from 'react-native-maps';
@@ -11,10 +15,10 @@ import Adverts from "../../adverts.json";
 
 const { width, height } = Dimensions.get('window');
 
-const ASPECT_RATIO = width / height;
+const ASPECT_RATIO = width;
 const LATITUDE = 39.874252;
 const LONGITUDE = 32.747575;
-const LATITUDE_DELTA = 0.0722;
+const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const Map = () => {
@@ -26,12 +30,10 @@ const Map = () => {
     longitudeDelta: LONGITUDE_DELTA
   }
 
-  console.log(Adverts[0]);
-
-
   return (
     <View style={{ flex: 1 }}>
       <MapView
+        ref={(mapView) => { _mapView = mapView; }}
         initialRegion={region}
         style={styles.map}
       >
@@ -45,6 +47,22 @@ const Map = () => {
           />
         ))}
       </MapView>
+      <FlatList
+        data={Adverts}
+        renderItem={({ item }) => <TouchableOpacity style={{ backgroundColor: 'transparent' }} onPress={() => _mapView.animateToRegion({
+          latitude: item.coordinates.latitude,
+          longitude: item.coordinates.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02
+        }, 1000)}>
+          <View style={styles.listItemContainer}>
+            <Text style={styles.pokeItemHeader}>{item.name}</Text>
+            <Image source={{ uri: item.thumbnail }}
+              style={styles.pokeImage} />
+          </View>
+        </TouchableOpacity>}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   )
 };
@@ -61,8 +79,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject
+    height: 500
   },
+  listItemContainer: {
+    backgroundColor: 'white',
+    borderStyle: 'solid',
+    borderColor: 'lightgrey',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15
+  },
+  pokeItemHeader: {
+    color: 'grey',
+    fontSize: 15,
+    width: 200
+  },
+  pokeImage: {
+    backgroundColor: 'transparent',
+    height: 40,
+    width: 40
+  }
 });
 
 export default Map;
