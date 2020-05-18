@@ -24,8 +24,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.874252",
+            "longitude": "32.747575"
         }
     },
     {
@@ -53,8 +53,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.871313",
+            "longitude": "32.764697"
         }
     },
     {
@@ -82,15 +82,15 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.855172",
+            "longitude": "32.756656"
         }
     },
     {
         "id": 4,
         "name": "AVCILAR KALE YAPI'DAN MERKEZİ KONUMDA BALKON 2+1 SATILIK DAİRE",
         "shortDesc": "Yenikent ve Stadyum Manzaralı 4. Kat Güney ve Doğu cepheli Kombili Çift Balkonlu Balkon Camlı Çift Banyo Çift Tuvalet Ebeveyn Banyosu vs ile Duvar kağıtları kartonpiyerli mutfak dolaplı ve ankastreli vestiyerli Çelik kapılı Asansörlü vs vs",
-                    "thumbnail": "https://i0.shbdn.com/photos/71/51/52/x5_701715152rla.jpg",
+        "thumbnail": "https://i0.shbdn.com/photos/71/51/52/x5_701715152rla.jpg",
         "firm": "Bilkent Emlak",
         "price": 500.0,
         "advertType": "Satılık",
@@ -140,8 +140,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.884065",
+            "longitude": "32.743298"
         }
     },
     {
@@ -169,8 +169,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.866025",
+            "longitude": "32.707072"
         }
     },
     {
@@ -198,8 +198,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.870412",
+            "longitude": "32.665267"
         }
     },
     {
@@ -227,8 +227,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.896202",
+            "longitude": "32.667854"
         }
     },
     {
@@ -256,8 +256,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "39.899006",
+            "longitude": "32.708552"
         }
     },
     {
@@ -285,8 +285,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "15.9670716467854",
+            "longitude": "12.1058243767132"
         }
     },
     {
@@ -314,8 +314,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "43.9670716467854",
+            "longitude": "23.1058243767132"
         }
     },
     {
@@ -343,8 +343,8 @@
             "phone": "05353728866"
         },
         "coordinates": {
-            "latitude": "40.9670716467854",
-            "longitude": "29.1058243767132"
+            "latitude": "23.9670716467854",
+            "longitude": "12.1058243767132"
         }
     }
 ]

@@ -12,17 +12,12 @@ import Adverts from "../../adverts.json";
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
-const LATITUDE = 40.9997026712811;
-const LONGITUDE = 29.0333358664072;
-const LATITUDE_DELTA = 0.0922;
+const LATITUDE = 39.874252;
+const LONGITUDE = 32.747575;
+const LATITUDE_DELTA = 0.0722;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const Map = () => {
-  const  [parkList,setparkList ]= useState([])
-
-  useEffect(() => {
-        setparkList(Adverts)
-  }, [])
 
   let region = {
     latitude: LATITUDE,
@@ -30,19 +25,22 @@ const Map = () => {
     latitudeDelta: LATITUDE_DELTA,
     longitudeDelta: LONGITUDE_DELTA
   }
-  
+
+  console.log(Adverts[0]);
+
+
   return (
     <View style={{ flex: 1 }}>
       <MapView
         initialRegion={region}
         style={styles.map}
       >
-        {parkList.map(marker => (
+        {Adverts.map(marker => (
           <Marker
-            key={marker.ParkID}
+            key={marker.id}
             coordinate={{
-              latitude: marker.Latitude,
-              longitude: marker.Longitude
+              latitude: marker.coordinates.latitude,
+              longitude: marker.coordinates.longitude
             }}
           />
         ))}
@@ -53,18 +51,18 @@ const Map = () => {
 
 
 const styles = StyleSheet.create({
-    container: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-    },
-    map: {
-      ...StyleSheet.absoluteFillObject
-    },
-  });
-  
-  export default Ma;
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject
+  },
+});
+
+export default Map;
