@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'lightgrey',
         height: '100%'
     },
-    pokemonImage: {
+    advertImage: {
         height: 250,
         width: '100%'
     },

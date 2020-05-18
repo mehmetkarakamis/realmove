@@ -26,10 +26,12 @@ class Register extends React.PureComponent {
 			password: this.password,
 			passwordRepeat: this.password_again
 		})
-		.then((response) => {
-			
+		.then(() => {
 			this.props.navigation.navigate("Profile");
-		});
+		})
+		.catch(() => {
+			Toast.info("Bu hesap daha önceden oluşturulmuş!");
+		})
 	}
 
 	setEmail = (event) => { this.email = event; }

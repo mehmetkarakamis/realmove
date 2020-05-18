@@ -22,6 +22,9 @@ class Home extends React.PureComponent {
 		})
 		.then(() => {
 			this.props.navigation.navigate("AdvertList");
+		})
+		.catch(error => {
+			Toast.info("Kullanıcı adı veya şifre hatalı!");
 		});
 	}
 

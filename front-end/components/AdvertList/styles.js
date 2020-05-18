@@ -22,8 +22,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 24,
-        margin: 5,
-        marginTop: 10
+        marginRight: "auto"
     }
 });
 

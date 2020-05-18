@@ -7,13 +7,12 @@ import styles from './styles';
 
 //Define your stateless componetns, and destrcuts props from function arguments
 
-const AdvertCard = ({name, url, navigation}) => {
-    
+const AdvertCard = ({name, url, id, navigation, thumbnail}) => {
     return (
-        <TouchableOpacity style={{backgroundColor: 'transparent'}} onPress={() => navigation.navigate('Advert', {url})}>
+        <TouchableOpacity style={{backgroundColor: 'transparent'}} onPress={() => navigation.navigate('Advert', {id})}>
             <View  style={styles.listItemContainer}>
                 <Text style={styles.pokeItemHeader}>{name}</Text>
-                <Image source={{uri: 'https://res.cloudinary.com/aa1997/image/upload/v1535930682/pokeball-image.jpg'}} 
+                <Image source={{uri: thumbnail}} 
                         style={styles.pokeImage}/>
             </View>
         </TouchableOpacity>

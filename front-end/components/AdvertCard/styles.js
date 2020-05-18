@@ -13,7 +13,8 @@ const styles = StyleSheet.create({
     },
     pokeItemHeader: {
         color: 'grey',
-        fontSize: 24,
+        fontSize: 15,
+        width: 200
     },
     pokeImage: {
         backgroundColor: 'transparent',
