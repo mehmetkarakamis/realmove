@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://den1.mysql3.gear.host:3306/anilsakar?useSSL=false&serverTimezone=UTC
+    username: anilsakar
+    password: Or0n49Z-!9my
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: false
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 15MB
+jwt:
+ secret: "{bcrypt}$donald"
+
+amazonProperties:
+  endpointUrl: https://s3.eu-central-1.amazonaws.com
+  accessKey: AKIAQZUWZYJNVPDHPGPV
+  secretKey: 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
+  bucketName: realmovebucket
+server:
+  port: 5000
