@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { AsyncStorage, Text, View } from "react-native";
 import { Button, InputItem, Provider, Toast } from '@ant-design/react-native';
 import axios from "../../plugins/Axios.js";
 import styles from "./styles";
@@ -12,20 +12,25 @@ class Home extends React.PureComponent {
 	}
 
 	login = () => {
-		if(this.email === "" || this.email === null || this.password === "" || this.password === null) {
+		if (this.email === "" || this.email === null || this.password === "" || this.password === null) {
 			Toast.info("Tüm alanların doldurulması zorunludur!", 3);
 			return;
 		}
-		axios.post("/login", {
+		const form_data = new FormData();
+		axios.post("/users-ws/api/user/login", {
 			email: this.email,
 			password: this.password
 		})
-		.then(() => {
-			this.props.navigation.navigate("AdvertList");
-		})
-		.catch(error => {
-			Toast.info("Kullanıcı adı veya şifre hatalı!");
-		});
+			.then(async(response) => {
+				this.props.navigation.navigate("AdvertList");
+				await AsyncStorage.setItem(
+					"token", response.data.token
+				);
+			})
+			.catch(error => {
+				console.log(error);
+				Toast.info("Kullanıcı adı veya şifre hatalı!");
+			});
 	}
 
 	setEmail = (event) => { this.email = event; }
@@ -45,19 +50,19 @@ class Home extends React.PureComponent {
 					>E-mail
 					</InputItem>
 
-						<InputItem
-							onChange={(event) => this.setPassword(event)}
-							placeholder="**********"
-							type="password"
-						>Parola
+					<InputItem
+						onChange={(event) => this.setPassword(event)}
+						placeholder="**********"
+						type="password"
+					>Parola
 						</InputItem>
 
-						<Button onPress={() => this.login()}>Giriş Yap</Button>
+					<Button onPress={() => this.login()}>Giriş Yap</Button>
 
-						<Text
-							onPress={() => this.props.navigation.navigate("Register")}
-							style={styles.register}
-						>Kayıt Ol</Text>
+					<Text
+						onPress={() => this.props.navigation.navigate("Register")}
+						style={styles.register}
+					>Kayıt Ol</Text>
 				</View>
 			</Provider>
 		);

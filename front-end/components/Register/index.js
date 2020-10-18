@@ -13,25 +13,25 @@ class Register extends React.PureComponent {
 	}
 
 	signUp = () => {
-		if(this.email === "" || this.email === null || this.password === "" || this.password === null || this.password_again === "" || this.password_again === null) {
+		if (this.email === "" || this.email === null || this.password === "" || this.password === null || this.password_again === "" || this.password_again === null) {
 			Toast.info("Tüm alanların doldurulması zorunludur!");
 			return;
 		}
-		if(this.password !== this.password_again) {
+		if (this.password !== this.password_again) {
 			Toast.info("Parolalar eşleşmiyor!");
 			return;
 		}
-		axios.post("/signup", {
-			email: this.email,
-			password: this.password,
-			passwordRepeat: this.password_again
-		})
-		.then(() => {
-			this.props.navigation.navigate("Profile");
-		})
-		.catch(() => {
-			Toast.info("Bu hesap daha önceden oluşturulmuş!");
-		})
+		const form_data = new FormData();
+		form_data.append("email", this.email);
+		form_data.append("password", this.password);
+		form_data.append("passwordRepeated", this.passwordRepeat);
+		axios.post("/users-ws/api/user", form_data)
+			.then(() => {
+				this.props.navigation.navigate("Profile");
+			})
+			.catch(() => {
+				Toast.info("Bu hesap daha önceden oluşturulmuş!");
+			})
 	}
 
 	setEmail = (event) => { this.email = event; }

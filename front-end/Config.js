@@ -1,1 +1,1 @@
-export const API = process.env.node_env === "production" ? "http://realmoveauthapi-env-1.eba-4bfmmbks.eu-central-1.elasticbeanstalk.com/" : "http://realmoveauthapi-env-1.eba-4bfmmbks.eu-central-1.elasticbeanstalk.com/";
+export const API = process.env.node_env === "production" ? "http://18.193.158.75:8011/" : "http://18.193.158.75:8011/";
