@@ -1,5 +1,4 @@
 import React from "react";
-import Toast from "react-native-toast-message";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { createStackNavigator } from "@react-navigation/stack";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
@@ -10,20 +9,22 @@ import * as eva from "@eva-design/eva";
 const Stack = createStackNavigator();
 
 // Views
-import Login from "./components/login";
+import Login from "./components/account";
+import List from "./components/list";
 import Search from "./components/search";
+import Profile from "./components/profile";
 
 export default () => (
 	<>
-		<Toast ref={(ref) => Toast.setRef(ref)} />
 		<IconRegistry icons={EvaIconsPack} />
 		<ApplicationProvider {...eva} theme={eva.light}>
-			<AppNavigator/>
 			<View style={CSS.root}>
 				<NavigationContainer>
 					<Stack.Navigator screenOptions={{ headerShown: false }}>
 						<Stack.Screen component={Login} name="Login" />
+						<Stack.Screen component={List} name="List" />
 						<Stack.Screen component={Search} name="Search" />
+						<Stack.Screen component={Profile} name="Profile" />
 					</Stack.Navigator>
 				</NavigationContainer>
 			</View>

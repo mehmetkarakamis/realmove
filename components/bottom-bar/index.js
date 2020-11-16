@@ -15,19 +15,15 @@ const profilIcon = (props) => (
 );
 
 class BottomBar extends React.PureComponent {
-	constructor() {
-		super();
-		this.state = {
-			index: 1
-		}
+	setSelectedIndex = (event) => {
+		if(event === 0) this.props.navigation.replace("List");
+		if(event === 1) this.props.navigation.replace("Search");
+		if(event === 2) this.props.navigation.replace("Profile");
 	}
-	
-
-	setSelectedIndex = (event) => { this.setState({ index: event }); }
 
 	render() {
 		return (
-			<BottomNavigation onSelect={this.setSelectedIndex} selectedIndex={this.state.index} style={CSS.bottomBar}>
+			<BottomNavigation onSelect={this.setSelectedIndex} selectedIndex={this.props.index} style={CSS.bottomBar}>
 				<BottomNavigationTab icon={vitrinIcon} title="Vitrin" />
 				<BottomNavigationTab icon={aramaIcon} title="Arama" />
 				<BottomNavigationTab icon={profilIcon} title="Profil" />
