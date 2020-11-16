@@ -1,6 +1,0 @@
-module Pods_realMove {
-  umbrella header "Pods-realMove-umbrella.h"
-
-  export *
-  module * { export * }
-}

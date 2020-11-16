@@ -1,6 +1,0 @@
-module Pods_realMove_realMoveTests {
-  umbrella header "Pods-realMove-realMoveTests-umbrella.h"
-
-  export *
-  module * { export * }
-}

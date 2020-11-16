@@ -1,1 +1,0 @@
-export const API = process.env.node_env === "production" ? "http://18.193.158.75:8011/" : "http://18.193.158.75:8011/";
