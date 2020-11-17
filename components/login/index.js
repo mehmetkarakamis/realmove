@@ -27,7 +27,8 @@ class Login extends React.PureComponent {
 			});
 			await AsyncStorage.setItem("@token", response.data.token);
 		})
-		.catch(() => {
+		.catch((err) => {
+			console.log(err);
 			console.log("catch");
 		})
 	}

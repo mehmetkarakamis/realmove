@@ -29,8 +29,8 @@ class Register extends React.PureComponent {
 		.then(() => {
 			console.log("then");
 		})
-		.catch(() => {
-			console.log("catch");
+		.catch((err) => {
+			console.log(err);
 		})
 	}
 
