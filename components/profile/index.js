@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "../../utils/Axios.js";
-import Toast from "react-native-toast-message";
 import BottomBar from "../bottom-bar";
 import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
 import { Button, Input, Text, Icon, TopNavigation, List } from "@ui-kitten/components";
@@ -26,7 +25,7 @@ const renderItem = ({ item }) => (
 );
 
 class Profile extends React.PureComponent {
-    constructor() {
+		constructor() {
 		super();
 		this.state = {
 			user: [],
@@ -53,22 +52,22 @@ class Profile extends React.PureComponent {
 			console.log(err);
 			console.log("catch");
 		})
-    }
+		}
 
 
 	render() {
 		return (
 			<>
 				<TopNavigation title="Profil" />
-                    <View style={CSS.input_container}>
-                        {/* <Icon fill="#8F9BB3" name="home" style={CSS.icon} /> */}
-                        <List
+										<View style={CSS.input_container}>
+												{/* <Icon fill="#8F9BB3" name="home" style={CSS.icon} /> */}
+												<List
 						data={this.state.user}
 						renderItem={renderItem}
 					/>
 
-                    </View>
-                <BottomBar />
+										</View>
+								<BottomBar />
 			</>
 		);
 	}

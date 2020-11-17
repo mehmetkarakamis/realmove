@@ -2,8 +2,9 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
 import Toast from "react-native-simple-toast";
-import { BottomNavigation, BottomNavigationTab, Button, Input, Text, Icon, Spinner } from "@ui-kitten/components";
+import { BottomNavigation, BottomNavigationTab, Button, CheckBox, Input, Text, Icon, Spinner } from "@ui-kitten/components";
 import { StyleSheet, View } from "react-native";
+import { isEmail, isEmpty } from "../../utils/InputHandler.js";
 
 class Login extends React.PureComponent {
 	constructor() {
@@ -13,11 +14,21 @@ class Login extends React.PureComponent {
 			email: "",
 			password: "",
 			password_again: "",
+			checkbox: false,
 			loading: false
 		}
 	}
 
 	requestLogin = () => {
+		// Validation
+		try {
+			if(isEmpty(this.state.email)) throw String("E-mail alanı boş bırakılamaz!");
+			if(isEmpty(this.state.password)) throw String("Parola alanı boş bırakılamaz!");
+		}
+		catch(error) {
+			Toast.show(error);
+			return;
+		}
 		this.setState({ loading: true }, () => {
 			axios.post("/users-ws/api/user/login ", {
 				email: this.state.email,
@@ -28,8 +39,7 @@ class Login extends React.PureComponent {
 				await AsyncStorage.setItem("@token", response.data.token);
 				this.props.navigation.replace("List");
 			})
-			.catch((error) => {
-				console.log(error);
+			.catch(() => {
 				Toast.show("Kullanıcı adı veya şifre hatalı!");
 			})
 			.finally(() => { this.setState({ loading: false }); });
@@ -37,6 +47,20 @@ class Login extends React.PureComponent {
 	}
 
 	requestRegister = () => {
+		// Validation
+		try {
+			if(isEmpty(this.state.email)) throw String("E-mail alanı boş bırakılamaz!");
+			if(isEmpty(this.state.password)) throw String("Parola alanı boş bırakılamaz!");
+			if(isEmpty(this.state.password_again)) throw String("Parola tekrarı girilmelidir!");
+			if(!isEmail(this.state.email)) throw String("Geçerli bir e-mail adresi yazınız!");
+			if(this.state.password !== this.state.password_again) throw String("Parolalar eşleşmiyor!");
+			if(this.state.checkbox === false) throw String("Kullanım koşulları kabul edilmelidir!");
+		}
+		catch(error) {
+			Toast.show(error);
+			return;
+		}
+		// Request
 		this.setState({ loading: true }, () => {
 			const data = new FormData();
 			data.append("email", this.state.email);
@@ -54,13 +78,15 @@ class Login extends React.PureComponent {
 		});
 	}
 
+	setCheckbox = event => { this.setState({ checkbox: event }); }
+
 	setEmail = event => { this.setState({ email: event }); }
 
 	setPassword = event => { this.setState({ password: event }); }
 
 	setPasswordAgain = event => { this.setState({ password_again: event }); }
 
-	setSelectedIndex = (event) => { this.setState({ index: event }); }
+	setSelectedIndex = event => { this.setState({ index: event }); }
 
 	render() {
 		return (
@@ -70,17 +96,21 @@ class Login extends React.PureComponent {
 					<BottomNavigationTab title="Kayıt Ol" />
 				</BottomNavigation>
 
-				<View style={CSS.input_container}>
-					<Icon fill="#8F9BB3" name="home" style={CSS.icon} />
-					<Text category='h3'>RealMove</Text>
+				<View style={CSS.container}>
+					{this.state.loading &&
+					<View style={CSS.spinner}>
+						<Spinner />
+					</View>
+					}
+
+					<Icon fill="#f59842" name="home" style={CSS.icon} />
+					<Text category="h3">RealMove</Text>
 
 					<View style={CSS.input}>
 						<Text style={CSS.input__text}>E-mail:</Text>
 						<Input
-							caption="Geçerli bir e-mail adresi olmalı!"
 							onChangeText={this.setEmail}
 							placeholder="Bir e-mail adresi giriniz"
-							style={CSS.input}
 							value={this.state.email}
 						/>
 					</View>
@@ -88,25 +118,27 @@ class Login extends React.PureComponent {
 					<View style={CSS.input}>
 						<Text style={CSS.input__text}>Parola:</Text>
 						<Input
-							caption="Güçlü bir şifre seçiniz!"
 							onChangeText={this.setPassword}
 							placeholder="Bir parola giriniz"
-							style={CSS.input}
 							value={this.state.password}
 						/>
 					</View>
 
 					{this.state.index === 1 &&
-					<View style={CSS.input}>
-						<Text style={CSS.input__text}>Parola Tekrar:</Text>
-						<Input
-							onChangeText={this.setPasswordAgain}
-							placeholder="Parolayı tekrar giriniz"
-							style={CSS.input}
-							value={this.state.password_again}
-							type="password"
-						/>
-					</View>
+					<>
+						<View style={CSS.input}>
+							<Text style={CSS.input__text}>Parola Tekrar:</Text>
+							<Input
+								onChangeText={this.setPasswordAgain}
+								placeholder="Parolayı tekrar giriniz"
+								value={this.state.password_again}
+							/>
+						</View>
+
+							<CheckBox checked={this.state.checkbox} onChange={this.setCheckbox} style={CSS.checkbox}>
+								<Text>Kullanım koşullarını okudum ve kabul ediyorum.</Text>
+							</CheckBox>
+					</>
 					}
 
 					<View style={CSS.input}>
@@ -116,12 +148,6 @@ class Login extends React.PureComponent {
 						<Button disabled={this.state.loading} onPress={this.requestRegister} style={CSS.button}>Kayıt Ol</Button>
 						}
 					</View>
-					
-					{this.state.loading &&
-					<View style={CSS.spinner}>
-						<Spinner />
-					</View>
-					}
 				</View>
 			</>
 		);
@@ -129,15 +155,15 @@ class Login extends React.PureComponent {
 }
 
 const CSS = StyleSheet.create({
-	icon: {
-		width: 64,
-		height: 64,
-		marginBottom: 12
-	},
-	input_container: {
+	container: {
 		marginTop: "5%",
 		display: "flex",
 		alignItems: "center"
+	},
+	icon: {
+		width: 48,
+		height: 48,
+		marginBottom: 6
 	},
 	input: {
 		marginBottom: "1%",
@@ -149,8 +175,12 @@ const CSS = StyleSheet.create({
 		fontSize: 14,
 		fontWeight: "700"
 	},
+	checkbox: {
+		marginBottom: "2%",
+		marginTop: "2%"
+	},
 	spinner: {
-		marginTop: "10%"
+		marginBottom: "10%"
 	}
 });
 

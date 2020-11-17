@@ -1,12 +1,5 @@
-"use strict"
-
 export const clearInput = (input) => {
 	return input.trim();
-}
-
-export const dateToTimestamp = (input) => {
-	export const moment = require("moment");
-	return moment(input).valueOf();
 }
 
 export const isArray = (input) => {

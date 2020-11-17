@@ -1,65 +1,60 @@
 import React from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
+import Toast from "react-native-simple-toast";
 import TopNavigation from "../top-navigation";
-import { Button, Icon, List as KittenList, ListItem } from "@ui-kitten/components";
+import { Button, List, ListItem } from "@ui-kitten/components";
+import { Image, StyleSheet } from "react-native";
 
-const renderItemAccessory = () => (
-	<Button size="small">Gözat</Button>
-);
-
-const renderItemIcon = (props) => (
-	<Icon name="home" {...props} />
-);
-
-const renderItem = ({ item }) => (
-	<ListItem
-		title={item.title}
-		description={item.description}
-		accessoryLeft={renderItemIcon}
-		accessoryRight={renderItemAccessory}
-	/>
-);
-
-class List extends React.PureComponent {
-	componentDidMount() {
-		this.getList();
-		console.log(1);
+class Listing extends React.PureComponent {
+	constructor() {
+		super();
+		this.state = {
+			advert_list: []
+		}
 	}
 
-	getList = async() => {
-		axios.get("/advert-ws/api/advert", {
-			headers: {
-				"Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`
-			}
-		})
-		.then(response => {
-			console.log(response.data);
-		})
-		.catch((error) => {
-			console.log(error);
-		})
+	componentDidMount(){
+		this.requestAdverts();
 	}
 
+	renderItemLeft = (advert_pictures) => () => (
+		<Image
+			source={{ uri: advert_pictures[0] }}
+			style={CSS.property_image}
+		/>
+	);
+	
+	renderItemRight = (id) => () => (
+		<Button onPress={() => this.props.navigation.navigate("AdvertDetails", { id })} size="small">Gözat</Button>
+	);
+
+	requestAdverts = async() => {
+		axios.get("/adverts-ws/api/advert/all", {
+			headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
+		})
+		.then((response) => {
+			this.setState({ advert_list: response.data });
+		})
+		.catch(() => {
+			Toast.show("Sunucuya bağlanırken hata ile karşılaşıldı!");
+		})
+	}
 	render() {
 		return (
 			<>
 				<TopNavigation title="Vitrin" />
-					<KittenList
-						data={
-							[
-								{
-									title: "Konut 1",
-									description: "Konut 1 açıklaması"
-								},
-								{
-									title: "Konut 2",
-									description: "Konut 2 açıklaması"
-								}
-							]
-						}
-						renderItem={renderItem}
+					<List
+						data={this.state.advert_list}
+						renderItem={(data) => {
+							return <ListItem
+								accessoryLeft={this.renderItemLeft(data.item.advertPictures)}
+								accessoryRight={this.renderItemRight(data.item.advertId)}
+								description={data.item.description}
+								title={data.item.title}
+							/>
+						}}
 					/>
 				<BottomBar index={0} navigation={this.props.navigation} />
 			</>
@@ -67,4 +62,11 @@ class List extends React.PureComponent {
 	}
 }
 
-export default List;
+const CSS = StyleSheet.create({
+	property_image: {
+		height: 75,
+		width: 75
+	}
+});
+
+export default Listing;

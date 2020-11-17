@@ -12,35 +12,21 @@ const Stack = createStackNavigator();
 import Login from "./components/account";
 import List from "./components/list";
 import Search from "./components/search";
-<<<<<<< HEAD
-import ListingPage from "./components/listing"
-import Profile from "./components/profile"
-import ListDetail from "./components/listDetail"
-=======
 import Profile from "./components/profile";
->>>>>>> 33d8e13a063e7c7b57ec295b000e18987837b41e
+import AdvertDetails from "./components/advert-details"
 
 export default () => (
 	<>
 		<IconRegistry icons={EvaIconsPack} />
 		<ApplicationProvider {...eva} theme={eva.light}>
-<<<<<<< HEAD
-
-=======
->>>>>>> 33d8e13a063e7c7b57ec295b000e18987837b41e
 			<View style={CSS.root}>
 				<NavigationContainer>
 					<Stack.Navigator screenOptions={{ headerShown: false }}>
-						<Stack.Screen component={Profile} name="Profile" />
-<<<<<<< HEAD
-						<Stack.Screen component={ListingPage} name="ListingPage" />
-						<Stack.Screen component={ListDetail} name="ListDetail" />
-=======
-						<Stack.Screen component={Login} name="Login" />
 						<Stack.Screen component={List} name="List" />
->>>>>>> 33d8e13a063e7c7b57ec295b000e18987837b41e
-						<Stack.Screen component={Search} name="Search" />
 						<Stack.Screen component={Login} name="Login" />
+						<Stack.Screen component={AdvertDetails} name="AdvertDetails" />
+						<Stack.Screen component={Search} name="Search" />
+						<Stack.Screen component={Profile} name="Profile" />
 					</Stack.Navigator>
 				</NavigationContainer>
 			</View>
