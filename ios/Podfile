@@ -8,7 +8,6 @@ target 'realmove' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-
   target 'realmoveTests' do
     inherit! :complete
     # Pods for testing

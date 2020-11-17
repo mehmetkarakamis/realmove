@@ -1,7 +1,9 @@
 import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
 import TopNavigation from "../top-navigation";
-import { Button, Icon, List, ListItem } from "@ui-kitten/components";
+import { Button, Icon, List as KittenList, ListItem } from "@ui-kitten/components";
 
 const renderItemAccessory = () => (
 	<Button size="small">Gözat</Button>
@@ -20,13 +22,31 @@ const renderItem = ({ item }) => (
 	/>
 );
 
+class List extends React.PureComponent {
+	componentDidMount() {
+		this.getList();
+		console.log(1);
+	}
 
-class Search extends React.PureComponent {
+	getList = async() => {
+		axios.get("/advert-ws/api/advert", {
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`
+			}
+		})
+		.then(response => {
+			console.log(response.data);
+		})
+		.catch((error) => {
+			console.log(error);
+		})
+	}
+
 	render() {
 		return (
 			<>
-				<TopNavigation title="Arama" />
-					<List
+				<TopNavigation title="Vitrin" />
+					<KittenList
 						data={
 							[
 								{
@@ -41,10 +61,10 @@ class Search extends React.PureComponent {
 						}
 						renderItem={renderItem}
 					/>
-				<BottomBar index={1} navigation={this.props.navigation} />
+				<BottomBar index={0} navigation={this.props.navigation} />
 			</>
 		);
 	}
 }
 
-export default Search;
+export default List;
