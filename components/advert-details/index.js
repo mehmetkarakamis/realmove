@@ -2,18 +2,35 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
-import Carousel from "react-native-snap-carousel";
 import Toast from "react-native-simple-toast";
 import TopNavigation from "../top-navigation";
-import { Image, StyleSheet, View } from "react-native";
+import { Pages } from 'react-native-pages';
+import { Image, StyleSheet, Text, View } from "react-native";
+import { Divider, List, ListItem } from '@ui-kitten/components';
+
+const lang = {
+	userId: "Kullanıcı ,ID",
+	advertId: "Emlak ID",
+	title: "Başlık",
+	city: "Şehir",
+	district: "İlçe",
+	region: "Bölge",
+	price: "Ücret",
+	description: "Açıklama",
+	advertType: "Emlak Türü",
+	squareMeter: "Metre Kare"
+}
 
 class AdvertDetails extends React.PureComponent {
 	constructor() {
 		super();
 		this.state = {
-			advert: {}
+			advert: {
+				advertPictures: []
+			}
 		}
 	}
+	
 
 	componentDidMount() {
 		this.getAdvert(this.props.route.params.id);
@@ -25,7 +42,7 @@ class AdvertDetails extends React.PureComponent {
 		})
 		.then((response) => {
 			this.setState({ advert: response.data });
-			console.log(JSON.stringify(response.data, null, 2));
+			console.log(Object(this.state.advert));
 		})
 		.catch(() => {
 			Toast.show("İlan getirilemedi!");
@@ -36,22 +53,21 @@ class AdvertDetails extends React.PureComponent {
 		return (
 			<>
 				<TopNavigation title="İlan Detayları" />
+				<View style={CSS.carousel}>
+					<Pages style={CSS.carousel}>
+						{this.state.advert.advertPictures.map((image) => {
+							return <Image style={CSS.images} source={{uri: image}} />;
+						})}
+					</Pages>
+				</View>
 
-
-					<Carousel
-						data={this.state.advert.advertPictures}
-						renderItem={({ item } ) => {
-							return (
-								<Image
-									source={{ uri: item }}
-									style={CSS.property_image}
-								/>
-							);
-						}}
-						sliderWidth={1000}
-						itemWidth={1000}
-					/>
-
+				<List
+					data={Object.keys(this.state.advert)}
+					ItemSeparatorComponent={Divider}
+					renderItem={({item, index}) => {
+						return <ListItem description={this.state.advert[item]} title={lang[item]} />
+					}}
+				/>
 
 				<BottomBar index={0} navigation={this.props.navigation} />
 			</>
@@ -60,13 +76,11 @@ class AdvertDetails extends React.PureComponent {
 }
 
 const CSS = StyleSheet.create({
-	property_image_container: {
-		display: "flex",
-		justifyContent: "center"
+	carousel: {
+		height: "30%"
 	},
-	property_image: {
-		height: 350,
-		width: 350
+	images: {
+		height: "100%"
 	}
 })
 
