@@ -2,8 +2,8 @@ import React from "react";
 import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
 import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
-import { Button, Input, Text, Icon, TopNavigation, List } from "@ui-kitten/components";
-import { StyleSheet, View } from "react-native";
+import { Button, Input, Text, Icon, TopNavigation, List, ListItem, Spinner } from "@ui-kitten/components";
+import { StyleSheet, View, Image } from "react-native";
 
 
 const renderItemAccessory = () => (
@@ -29,6 +29,7 @@ class Profile extends React.PureComponent {
 		super();
 		this.state = {
 			user: [],
+			loading: true
 		}
 	}
 
@@ -47,6 +48,7 @@ class Profile extends React.PureComponent {
 			console.log(response.data);
 			const user = response.data;
 			this.setState({ user });
+			this.setState({loading: false})
 		})
 		.catch((err) => {
 			console.log(err);
@@ -57,17 +59,37 @@ class Profile extends React.PureComponent {
 
 	render() {
 		return (
+			
 			<>
-				<TopNavigation title="Profil" />
-										<View style={CSS.input_container}>
+			<TopNavigation title="Profil" />
+			<View style={CSS.generalSection}>
+				{this.state.loading &&
+					<View style={CSS.spinner}>
+						<Spinner />
+					</View>
+					}
+				<View style={CSS.logout}>
+					<Text category='h1'>Profile Details</Text>
+					<Button size="tiny" onPress={() => this.props.navigation.navigate("Login")} >Çıkış</Button>
+				</View>
+										<View>
+											<View style={CSS.logoContainer}>
+												<Image style={CSS.tinyLogo} source={{
+          											uri: `${this.state.user.profilePicture}`
+        											}}/>
+											</View>
+											<Text>Username: {this.state.user.fullName}</Text>
+											<Text>Phone Number: {this.state.user.phoneNumber}</Text>
 												{/* <Icon fill="#8F9BB3" name="home" style={CSS.icon} /> */}
-												<List
-						data={this.state.user}
-						renderItem={renderItem}
-					/>
-
+												<Text category='h5' style= {CSS.sectionDivide}>Favorite Houses</Text>
+											<List
+											data={this.state.user.favorites}
+											renderItem={renderItem}
+											/>
 										</View>
-								<BottomBar />
+								
+			</View>			
+			<BottomBar index={3} navigation={this.props.navigation} />							
 			</>
 		);
 	}
@@ -94,6 +116,31 @@ const CSS = StyleSheet.create({
 		marginBottom: "0.50%",
 		fontSize: 14,
 		fontWeight: "700"
+	},
+	spinner: {
+		marginBottom: "10%"
+	},
+	logoContainer: {
+		display: "flex",
+		alignItems: "center"
+	},
+	tinyLogo: {
+		margin: 30,
+		width: 150,
+		height: 150,
+		borderRadius: 100
+	},
+	sectionDivide: {
+		marginTop: 20,
+		marginBottom: 10
+	},
+	generalSection: {
+		margin: 10
+	},
+	logout: {
+		display: "flex",
+		flexDirection: 'row',
+		justifyContent: 'space-between',
 	}
 });
 

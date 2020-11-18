@@ -10,6 +10,7 @@ const Stack = createStackNavigator();
 
 // Views
 import Login from "./components/account";
+import Map from "./components/map";
 import List from "./components/list";
 import Search from "./components/search";
 import Profile from "./components/profile";
@@ -22,8 +23,9 @@ export default () => (
 			<View style={CSS.root}>
 				<NavigationContainer>
 					<Stack.Navigator screenOptions={{ headerShown: false }}>
-						<Stack.Screen component={List} name="List" />
 						<Stack.Screen component={Login} name="Login" />
+						<Stack.Screen component={Map} name="Map" />
+						<Stack.Screen component={List} name="List" />
 						<Stack.Screen component={AdvertDetails} name="AdvertDetails" />
 						<Stack.Screen component={Search} name="Search" />
 						<Stack.Screen component={Profile} name="Profile" />

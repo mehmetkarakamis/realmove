@@ -30,17 +30,19 @@ class Login extends React.PureComponent {
 			return;
 		}
 		this.setState({ loading: true }, () => {
-			axios.post("/users-ws/api/user/login ", {
-				email: this.state.email,
-				password: this.state.password
-			})
+			axios.post("/users-ws/api/user/login", {
+					email: this.state.email,
+					password: this.state.password
+				})
 			.then(async(response) => {
 				Toast.show("Giriş başarılı!");
 				await AsyncStorage.setItem("@token", response.data.token);
 				this.props.navigation.replace("List");
 			})
-			.catch(() => {
+			.catch((err) => {
 				Toast.show("Kullanıcı adı veya şifre hatalı!");
+				console.log(err);
+
 			})
 			.finally(() => { this.setState({ loading: false }); });
 		})
@@ -71,8 +73,9 @@ class Login extends React.PureComponent {
 				Toast.show("Kullanıcı başarıyla oluşturuldu!");
 				this.setState({ index: 0 });
 			})
-			.catch(() => {
+			.catch((err) => {
 				Toast.show("Kullanıcı oluşturulamadı!");
+				console.log(err);
 			})
 			.finally(() => { this.setState({ loading: false }); });
 		});

@@ -41,7 +41,7 @@ class Search extends React.PureComponent {
 						}
 						renderItem={renderItem}
 					/>
-				<BottomBar index={1} navigation={this.props.navigation} />
+				<BottomBar index={2} navigation={this.props.navigation} />
 			</>
 		);
 	}
