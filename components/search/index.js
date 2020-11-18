@@ -2,6 +2,8 @@ import React from "react";
 import BottomBar from "../bottom-bar";
 import TopNavigation from "../top-navigation";
 import { Button, Icon, Input, List, ListItem } from "@ui-kitten/components";
+import Jason from "../../adverts.json"
+
 
 const renderItemAccessory = () => (
 	<Button size="small">Gözat</Button>
@@ -13,8 +15,8 @@ const renderItemIcon = (props) => (
 
 const renderItem = ({ item }) => (
 	<ListItem
-		title={item.title}
-		description={item.description}
+		title={item.name}
+		description={item.shortDesc}
 		accessoryLeft={renderItemIcon}
 		accessoryRight={renderItemAccessory}
 	/>
@@ -25,21 +27,6 @@ class Search extends React.PureComponent {
 	constructor() {
 		super();
 		this.state = {
-			data:
-				[
-					{
-						title: "Konut 1",
-						description: "Konut 1 açıklaması"
-					},
-					{
-						title: "Konut 2",
-						description: "Konut 2 açıklaması"
-					},
-					{
-						title: "Konut 3",
-						description: "Konut 3 açıklaması"
-					}
-				],
 				value: ""
 		}
 	}
@@ -52,7 +39,7 @@ class Search extends React.PureComponent {
 				<TopNavigation title="Arama" />
 				<Input  onChangeText={this.setValue} value={this.state.value} placeholder="Aranacak kelime giriniz" />
 					<List
-						data={this.state.data.filter((item) => { return item.description.includes(this.state.value); })}
+						data={Jason.filter((item) => { return item.name.toLowerCase().includes(this.state.value.toLowerCase()); })}
 						renderItem={renderItem}
 					/>
 				<BottomBar index={2} navigation={this.props.navigation} />
