@@ -1,0 +1,22 @@
+export default {
+	title: "Başlık",
+	city: "Şehir",
+	district: "İlçe",
+	region: "Bölge",
+	price: "Ücret",
+	description: "Açıklama",
+	advertType: "Emlak Türü",
+	squareMeter: "Metre Kare",
+	residentalType: "Daire Türü",
+	numberOfRooms: "Oda Sayısı",
+	floorNumber: "Bulunduğu Kat",
+	buildingAge: "Bina Yaşı",
+	heatingType: "Isıtma Tipi",
+	numberOfFloors: "Kat Sayısı",
+	itemStatus: "Boş / Dolu",
+	numberOfBathrooms: "Banyo Sayısı",
+	status: "Daire Statüsü",
+	studentOrSinglePerson: "Kimin İçin",
+	front: "Cephe",
+	inTheSite: "Site"
+}

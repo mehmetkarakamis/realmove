@@ -1,147 +1,176 @@
 import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
-import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
-import { Button, Input, Text, Icon, TopNavigation, List, ListItem, Spinner } from "@ui-kitten/components";
-import { StyleSheet, View, Image } from "react-native";
-
-
-const renderItemAccessory = () => (
-	<Button size="small">Gözat</Button>
-);
-
-const renderItemIcon = (props) => (
-	<Icon name="home" {...props} />
-);
-
-const renderItem = ({ item }) => (
-	<ListItem
-		title={item.phoneNumber}
-		description={item.fullName}
-		accessoryLeft={renderItemIcon}
-		accessoryRight={renderItemAccessory}
-	
-	/>
-);
+import Toast from "../toast";
+import TopNavigation from "../top-navigation";
+import { Button, List, ListItem, Input, Spinner, Text } from "@ui-kitten/components";
+import { Image, StyleSheet, View } from "react-native";
 
 class Profile extends React.PureComponent {
-		constructor() {
+	constructor() {
 		super();
 		this.state = {
-			user: [],
-			loading: true
+			profile: {},
+			loading: false
 		}
 	}
 
-	componentDidMount(){
-		this.requestUser();
+	componentDidMount() {
+		if(this.props?.route?.params?.id) this.getOtherProfile(this.props?.route?.params?.id);
+		else this.getProfile();
 	}
 
-	requestUser = () => {
-		axios.get("/users-ws/api/user/userDetails", {
-			headers: {
-				'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjODAyMTBiOC1mNmU2LTRhMzMtOWIxMS0yODhjMTE4Y2FmMTEiLCJleHAiOjE2MDY0NjIyMjZ9.pQLuMWQ64eCnu235265i1-h-RNmhNQjhvFGi9dRY5dk8jCHApkd6ULN1p7It28y6mn231x69rMjKBNYJ36vV8g'
+	getProfile = () => {
+		this.setState({ loading: true }, async() => {
+			axios.get("/users-ws/api/user/userDetails", {
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+			})
+			.then((response) => {
+				if(response.data.fullName === null) Toast.info("Kullanıcı bilgileri eksik! Lütfen tamamlayınız!");
+				this.setState({ profile: response.data });
+			})
+			.catch((e) => {
+				Toast.error("Profil getirilemedi!");
+			})
+			.finally(() => { this.setState({ loading: false }); });
+		});
+	}
+
+	getOtherProfile = (id) => {
+		this.setState({ loading: true }, async() => {
+		axios.get("/users-ws/api/user/other/userDetails", {
+			params: { userId: id },
+			headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+		})
+		.then((response) => {
+			this.setState({ profile: response.data });
+		})
+		.catch(() => {
+			Toast.error("Profil getirilemedi!");
+		})
+		.finally(() => { this.setState({ loading: false }); });
+		});
+	}
+
+	handleChoosePhoto = () => {
+		ImagePicker.launchImageLibrary({ noData: true }, response => {
+			if(response.uri) {
+				this.setState({ photo: response });
 			}
-		})
-		.then(async(response) => {
-			console.log("başarıyla kullanıcı alındı");
-			console.log(response.data);
-			const user = response.data;
-			this.setState({ user });
-			this.setState({loading: false})
-		})
-		.catch((err) => {
-			console.log(err);
-			console.log("catch");
-		})
-		}
+		});
+	};
 
+
+	renderFavorites = ({ item, index }) => {
+		return <ListItem onPress={() => this.props.navigation.navigate("AdvertDetails", { id: item })} title={item} key={index} />
+	}
+
+	saveProfile = async() => {
+		const data = new FormData();
+		data.append("fullName", this.state.profile.fullName);
+		data.append("phoneNumber", this.state.profile.phoneNumber);
+		axios.patch("/users-ws/api/user/userDetails", data, {
+			headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+		})
+		.then(() => {
+			Toast.success("Bilgiler başarıyla güncellendi!");
+			this.props.navigation.replace("Profile");
+		})
+		.catch(() => {
+			Toast.error("Bilgiler güncellenemedi!");
+		})
+	}
+
+	setFullname = (event) => { this.setState({ profile: { ...this.state.profile, fullName: event } }); }
+
+	setPhoneNumber = (event) => { this.setState({ profile: { ...this.state.profile, phoneNumber: event } }); }
 
 	render() {
 		return (
-			
-			<>
-			<TopNavigation title="Profil" />
-			<View style={CSS.generalSection}>
-				{this.state.loading &&
+			<View style={CSS.advert_details}>
+				<TopNavigation title="Profil" />
+
+				<View style={CSS.container}>
+					{this.state.loading ?
 					<View style={CSS.spinner}>
-						<Spinner />
+						<Spinner size="large" />
+					</View>
+					:
+					<View style={CSS.field}>
+						<View style={CSS.pp_container}>
+							<Image source={{uri: this.state.profile.profilePicture}} style={CSS.pp} />
+						</View>
+
+						<Input
+							caption="Tam isim"
+							disabled={this.props?.route?.params?.id}
+							onChangeText={this.setFullname}
+							placeholder="Tam isim"
+							value={this.state.profile.fullName}
+						/>
+
+						<Input
+							caption="Telefon numarası"
+							disabled={this.props?.route?.params?.id}
+							onChangeText={this.setPhoneNumber}
+							placeholder="Telefon numarası"
+							value={this.state.profile.phoneNumber}
+						/>
+
+						{!this.props?.route?.params?.id &&
+						<>
+							<Text category="p1" style={CSS.head}>Favoriler</Text>
+							<List
+								data={this.state.profile.favorites}
+								renderItem={this.renderFavorites}
+							/>
+
+						<Button onPress={this.saveProfile} size="small" style={CSS.save_button}>Kaydet</Button>
+						</>
+						}
 					</View>
 					}
-				<View style={CSS.logout}>
-					<Text category='h1'>Profile Details</Text>
-					<Button size="tiny" onPress={() => this.props.navigation.navigate("Login")} >Çıkış</Button>
 				</View>
-										<View>
-											<View style={CSS.logoContainer}>
-												<Image style={CSS.tinyLogo} source={{
-          											uri: `${this.state.user.profilePicture}`
-        											}}/>
-											</View>
-											<Text>Username: {this.state.user.fullName}</Text>
-											<Text>Phone Number: {this.state.user.phoneNumber}</Text>
-												{/* <Icon fill="#8F9BB3" name="home" style={CSS.icon} /> */}
-												<Text category='h5' style= {CSS.sectionDivide}>Favorite Houses</Text>
-											<List
-											data={this.state.user.favorites}
-											renderItem={renderItem}
-											/>
-										</View>
-								
-			</View>			
-			<BottomBar index={3} navigation={this.props.navigation} />							
-			</>
+
+				<BottomBar index={3} navigation={this.props.navigation} />
+			</View>
 		);
 	}
 }
 
-
 const CSS = StyleSheet.create({
-	icon: {
-		width: 64,
-		height: 64,
-		marginBottom: 12
-	},
-	input_container: {
-		marginTop: "5%",
+	advert_details: {
 		display: "flex",
-		alignItems: "center"
+		height: "100%"
 	},
-	input: {
-		marginBottom: "1%",
-		marginTop: "1%",
-		width: "90%"
-	},
-	input__text: {
-		marginBottom: "0.50%",
-		fontSize: 14,
-		fontWeight: "700"
+	container: {
+		flex: 1
 	},
 	spinner: {
-		marginBottom: "10%"
+		alignItems: "center",
+		flex: 1,
+		justifyContent: "center"
 	},
-	logoContainer: {
-		display: "flex",
+	pp_container: {
+		marginBottom: "3%",
 		alignItems: "center"
 	},
-	tinyLogo: {
-		margin: 30,
-		width: 150,
-		height: 150,
-		borderRadius: 100
+	pp: {
+		borderRadius: 50,
+		height: 100,
+		width: 100
 	},
-	sectionDivide: {
-		marginTop: 20,
-		marginBottom: 10
+	field: {
+		padding: "2%"
 	},
-	generalSection: {
-		margin: 10
+	head: {
+		marginBottom: "2%",
+		marginTop: "2%"
 	},
-	logout: {
-		display: "flex",
-		flexDirection: 'row',
-		justifyContent: 'space-between',
+	save_button: {
+		marginTop: "2%"
 	}
-});
+})
 
 export default Profile;

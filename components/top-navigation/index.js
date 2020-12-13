@@ -7,10 +7,14 @@ const plusIcon = (props) => (
 );
 
 class TopNavigation extends React.PureComponent {
+	redirectAdd() {
+		this.props.navigation.navigate("Add");
+	}
+
 	render() {
 		return (
 			<Navigation
-				accessoryRight={() => <TopNavigationAction icon={plusIcon}/>}
+				accessoryRight={() => <TopNavigationAction onPress={() => this.redirectAdd()} icon={plusIcon}/>}
 				style={CSS.navigation}
 				title={this.props.title}
 			/>

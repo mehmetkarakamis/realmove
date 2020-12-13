@@ -2,82 +2,126 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
-import Toast from "react-native-simple-toast";
+import Toast from "../toast";
 import TopNavigation from "../top-navigation";
-import { Pages } from 'react-native-pages';
-import { Image, StyleSheet, Text, View } from "react-native";
-import { Divider, List, ListItem } from '@ui-kitten/components';
-
-const lang = {
-	userId: "Kullanıcı ,ID",
-	advertId: "Emlak ID",
-	title: "Başlık",
-	city: "Şehir",
-	district: "İlçe",
-	region: "Bölge",
-	price: "Ücret",
-	description: "Açıklama",
-	advertType: "Emlak Türü",
-	squareMeter: "Metre Kare"
-}
+import Types from "../../utils/Types.js";
+import { Button, Divider, Icon, List, ListItem, Spinner } from "@ui-kitten/components";
+import { Image, StyleSheet, View } from "react-native";
+import { Pages } from "react-native-pages";
 
 class AdvertDetails extends React.PureComponent {
 	constructor() {
 		super();
 		this.state = {
-			advert: {
-				advertPictures: []
-			}
+			advert: [],
+			loading: false
 		}
 	}
-	
 
 	componentDidMount() {
 		this.getAdvert(this.props.route.params.id);
 	}
 
-	getAdvert = async(id) => {
-		axios.get(`/adverts-ws/api/advert?advertId=${id}`, {
+	addFavorite = async() => {
+		const data = new FormData();
+		data.append("advertId", this.state.advert.advertId);
+		axios.patch("/users-ws/api/user/favorites", data, {
 			headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
 		})
-		.then((response) => {
-			this.setState({ advert: response.data });
-			console.log(Object(this.state.advert));
+		.then(() => {
+			Toast.success("Bu ilan favorilerinize eklendi!");
 		})
 		.catch(() => {
-			Toast.show("İlan getirilemedi!");
+			Toast.error("Favorilere eklenemedi!");
 		});
 	}
 
+	getAdvert = (id) => {
+		this.setState({ loading: true }, async() => {
+			axios.get(`/adverts-ws/api/advert?advertId=${id}`, {
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+			})
+			.then((response) => {
+				this.setState({ advert: response.data });
+			})
+			.catch(() => {
+				Toast.error("İlan getirilemedi!");
+			})
+			.finally(() => { this.setState({ loading: false }); });
+		});
+	}
+
+	navigateProfile = () => {
+		this.props.navigation.replace("Profile", { id: this.state.advert.userId });
+	}
+
+	starIcon = (props) => <Icon {...props} name="star" />
+
 	render() {
 		return (
-			<>
+			<View style={CSS.advert_details}>
 				<TopNavigation title="İlan Detayları" />
-				<View style={CSS.carousel}>
-					<Pages style={CSS.carousel}>
-						{this.state.advert.advertPictures.map((image) => {
-							return <Image style={CSS.images} source={{uri: image}} />;
-						})}
-					</Pages>
+
+				<View style={CSS.container}>
+					{this.state.loading ?
+					<View style={CSS.spinner}>
+						<Spinner size="large" />
+					</View>
+					:
+					<>
+						<View style={CSS.carousel}>
+							<Pages style={CSS.carousel}>
+								{this.state.advert.advertPictures?.map((image, index) => {
+									return <Image key={index} source={{uri: image}} style={CSS.images} />;
+								})}
+							</Pages>
+						</View>
+
+						<View style={CSS.button_container}>
+							<Button accessoryLeft={this.starIcon} onPress={this.addFavorite} size="small" />
+							<Button onPress={this.navigateProfile} size="small" status="success">Kullanıcı Profili</Button>
+						</View>
+
+						<List
+							data={Object.entries(this.state.advert)}
+							ItemSeparatorComponent={Divider}
+							renderItem={({item, index }) => {
+								if(Object.keys(Types).includes(item[0]))
+									return <ListItem key={index} description={item[1]} title={Types[item[0]]} />
+							}}
+						/>
+					</>
+					}
 				</View>
 
-				<List
-					data={Object.keys(this.state.advert)}
-					ItemSeparatorComponent={Divider}
-					renderItem={({item, index}) => {
-						return <ListItem description={this.state.advert[item]} title={lang[item]} />
-					}}
-				/>
-
 				<BottomBar index={0} navigation={this.props.navigation} />
-			</>
+			</View>
 		);
 	}
 }
 
 const CSS = StyleSheet.create({
+	advert_details: {
+		display: "flex",
+		height: "100%"
+	},
+	container: {
+		flex: 1
+	},
+	spinner: {
+		alignItems: "center",
+		flex: 1,
+		justifyContent: "center"
+	},
 	carousel: {
-		height: "30%"
+		height: "25%"
+	},
+	button_container: {
+		padding: "2%",
+		backgroundColor: "#FFF",
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "space-between"
 	},
 	images: {
 		height: "100%"

@@ -1,10 +1,10 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
-import Toast from "react-native-simple-toast";
+import Toast from "../toast";
 import { BottomNavigation, BottomNavigationTab, Button, CheckBox, Input, Text, Icon, Spinner } from "@ui-kitten/components";
-import { StyleSheet, View } from "react-native";
 import { isEmail, isEmpty } from "../../utils/InputHandler.js";
+import { StyleSheet, View } from "react-native";
 
 class Login extends React.PureComponent {
 	constructor() {
@@ -24,27 +24,27 @@ class Login extends React.PureComponent {
 		try {
 			if(isEmpty(this.state.email)) throw String("E-mail alanı boş bırakılamaz!");
 			if(isEmpty(this.state.password)) throw String("Parola alanı boş bırakılamaz!");
+			if(!isEmail(this.state.email)) throw String("Geçerli bir e-mail adresi yazınız!");
 		}
 		catch(error) {
-			Toast.show(error);
+			Toast.error(error);
 			return;
 		}
+
 		this.setState({ loading: true }, () => {
 			axios.post("/users-ws/api/user/login", {
 					email: this.state.email,
 					password: this.state.password
 				})
 			.then(async(response) => {
-				Toast.show("Giriş başarılı!");
+				Toast.success("Giriş başarılı!");
 				await AsyncStorage.setItem("@token", response.data.token);
 				this.props.navigation.replace("List");
 			})
-			.catch((err) => {
-				Toast.show("Kullanıcı adı veya şifre hatalı!");
-				console.log(err);
-
-			})
-			.finally(() => { this.setState({ loading: false }); });
+			.catch(() => {
+				Toast.error("Bilgiler hatalı veya hesap aktif edilmedi!");
+				this.setState({ loading: false });
+			});
 		})
 	}
 
@@ -59,7 +59,7 @@ class Login extends React.PureComponent {
 			if(this.state.checkbox === false) throw String("Kullanım koşulları kabul edilmelidir!");
 		}
 		catch(error) {
-			Toast.show(error);
+			Toast.error(error);
 			return;
 		}
 		// Request
@@ -70,12 +70,11 @@ class Login extends React.PureComponent {
 			data.append("passwordRepeat", this.state.password_again);
 			axios.post("/users-ws/api/user ", data)
 			.then(() => {
-				Toast.show("Kullanıcı başarıyla oluşturuldu!");
+				Toast.success("Kullanıcı başarıyla oluşturuldu!");
 				this.setState({ index: 0 });
 			})
-			.catch((err) => {
-				Toast.show("Kullanıcı oluşturulamadı!");
-				console.log(err);
+			.catch(() => {
+				Toast.error("Bu e-mail adresi zaten sisteme kayıtlı!");
 			})
 			.finally(() => { this.setState({ loading: false }); });
 		});
@@ -93,75 +92,84 @@ class Login extends React.PureComponent {
 
 	render() {
 		return (
-			<>
-				<BottomNavigation onSelect={this.setSelectedIndex} selectedIndex={this.state.index}>
+			<View style={CSS.account}>
+				<BottomNavigation class={CSS.top_navigation} onSelect={this.setSelectedIndex} selectedIndex={this.state.index}>
 					<BottomNavigationTab title="Giriş Yap" />
 					<BottomNavigationTab title="Kayıt Ol" />
 				</BottomNavigation>
 
 				<View style={CSS.container}>
-					{this.state.loading &&
+					{this.state.loading ?
 					<View style={CSS.spinner}>
-						<Spinner />
+						<Spinner size="large" />
 					</View>
-					}
-
-					<Icon fill="#f59842" name="home" style={CSS.icon} />
-					<Text category="h3">RealMove</Text>
-
-					<View style={CSS.input}>
-						<Text style={CSS.input__text}>E-mail:</Text>
-						<Input
-							onChangeText={this.setEmail}
-							placeholder="Bir e-mail adresi giriniz"
-							value={this.state.email}
-						/>
-					</View>
-
-					<View style={CSS.input}>
-						<Text style={CSS.input__text}>Parola:</Text>
-						<Input
-							onChangeText={this.setPassword}
-							placeholder="Bir parola giriniz"
-							value={this.state.password}
-						/>
-					</View>
-
-					{this.state.index === 1 &&
+					:
 					<>
+						<Icon fill="#f59842" name="home" style={CSS.icon} />
+						<Text category="h3">RealMove</Text>
+
 						<View style={CSS.input}>
-							<Text style={CSS.input__text}>Parola Tekrar:</Text>
+							<Text style={CSS.input__text}>E-mail:</Text>
 							<Input
-								onChangeText={this.setPasswordAgain}
-								placeholder="Parolayı tekrar giriniz"
-								value={this.state.password_again}
+								caption="Bir e-mail adresi giriniz"
+								onChangeText={this.setEmail}
+								value={this.state.email}
 							/>
 						</View>
 
-							<CheckBox checked={this.state.checkbox} onChange={this.setCheckbox} style={CSS.checkbox}>
-								<Text>Kullanım koşullarını okudum ve kabul ediyorum.</Text>
-							</CheckBox>
+						<View style={CSS.input}>
+							<Text style={CSS.input__text}>Parola:</Text>
+							<Input
+								caption="Bir parola giriniz"
+								onChangeText={this.setPassword}
+								secureTextEntry={true}
+								value={this.state.password}
+							/>
+						</View>
+
+						{this.state.index === 1 &&
+						<>
+							<View style={CSS.input}>
+								<Text style={CSS.input__text}>Parola Tekrar:</Text>
+								<Input
+									caption="Parolayı tekrar giriniz"
+									onChangeText={this.setPasswordAgain}
+									secureTextEntry={true}
+									value={this.state.password_again}
+								/>
+							</View>
+
+								<CheckBox checked={this.state.checkbox} onChange={this.setCheckbox} style={CSS.checkbox}>
+									<Text>Kullanım koşullarını okudum ve kabul ediyorum.</Text>
+								</CheckBox>
+						</>
+						}
+
+						<View style={CSS.input}>
+							{this.state.index === 0 ?
+							<Button disabled={this.state.loading} onPress={this.requestLogin} style={CSS.button}>Giriş Yap</Button>
+							:
+							<Button disabled={this.state.loading} onPress={this.requestRegister} style={CSS.button}>Kayıt Ol</Button>
+							}
+						</View>
 					</>
 					}
-
-					<View style={CSS.input}>
-						{this.state.index === 0 ?
-						<Button disabled={this.state.loading} onPress={this.requestLogin} style={CSS.button}>Giriş Yap</Button>
-						:
-						<Button disabled={this.state.loading} onPress={this.requestRegister} style={CSS.button}>Kayıt Ol</Button>
-						}
-					</View>
 				</View>
-			</>
+			</View>
 		);
 	}
 }
 
 const CSS = StyleSheet.create({
+	account: {
+		display: "flex",
+		height: "100%"
+	},
 	container: {
 		marginTop: "5%",
 		display: "flex",
-		alignItems: "center"
+		alignItems: "center",
+		flex: 1
 	},
 	icon: {
 		width: 48,
@@ -183,7 +191,8 @@ const CSS = StyleSheet.create({
 		marginTop: "2%"
 	},
 	spinner: {
-		marginBottom: "10%"
+		flex: 1,
+		justifyContent: "center"
 	}
 });
 
