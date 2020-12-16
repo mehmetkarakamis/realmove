@@ -1,8 +1,9 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
+import Loading from "../loading/index.js";
 import Toast from "../toast";
-import { BottomNavigation, BottomNavigationTab, Button, CheckBox, Input, Text, Icon, Spinner } from "@ui-kitten/components";
+import { BottomNavigation, BottomNavigationTab, Button, CheckBox, Icon, Input, Text } from "@ui-kitten/components";
 import { isEmail, isEmpty } from "../../utils/InputHandler.js";
 import { StyleSheet, View } from "react-native";
 
@@ -30,7 +31,7 @@ class Login extends React.PureComponent {
 			Toast.error(error);
 			return;
 		}
-
+		// Send request
 		this.setState({ loading: true }, () => {
 			axios.post("/users-ws/api/user/login", {
 					email: this.state.email,
@@ -63,7 +64,7 @@ class Login extends React.PureComponent {
 			Toast.error(error);
 			return;
 		}
-		// Request
+		// Send request
 		this.setState({ loading: true }, () => {
 			const data = new FormData();
 			data.append("email", this.state.email);
@@ -71,7 +72,7 @@ class Login extends React.PureComponent {
 			data.append("passwordRepeat", this.state.password_again);
 			axios.post("/users-ws/api/user ", data)
 			.then(() => {
-				Toast.success("Kullanıcı başarıyla oluşturuldu!");
+				Toast.success("Kullanıcı başarıyla oluşturuldu, lütfen hesabınızı aktif edin!");
 				this.setState({ index: 0 });
 			})
 			.catch(() => {
@@ -94,95 +95,81 @@ class Login extends React.PureComponent {
 
 	render() {
 		return (
-			
-			<View style={CSS.account}>
-				<BottomNavigation class={CSS.top_navigation} onSelect={this.setSelectedIndex} selectedIndex={this.state.index}>
+			<Loading loading={this.state.loading}>
+				<BottomNavigation onSelect={this.setSelectedIndex} selectedIndex={this.state.index}>
 					<BottomNavigationTab title="Giriş Yap" />
 					<BottomNavigationTab title="Kayıt Ol" />
 				</BottomNavigation>
 
 				<View style={CSS.container}>
-					{this.state.loading ?
-					<View style={CSS.spinner}>
-						<Spinner size="large" />
+					<Icon fill="#f59842" name="home" style={CSS.home_icon} />
+					<Text category="h3">RealMove</Text>
+
+					<View style={CSS.input}>
+						<Text style={CSS.input__text}>E-mail:</Text>
+						<Input
+							caption="Bir e-mail adresi giriniz"
+							onChangeText={this.setEmail}
+							value={this.state.email}
+						/>
 					</View>
-					:
+
+					<View style={CSS.input}>
+						<Text style={CSS.input__text}>Parola:</Text>
+						<Input
+							caption="Bir parola giriniz"
+							onChangeText={this.setPassword}
+							secureTextEntry={true}
+							value={this.state.password}
+						/>
+					</View>
+
+					{this.state.index === 1 &&
 					<>
-						<Icon fill="#f59842" name="home" style={CSS.icon} />
-						<Text category="h3">RealMove</Text>
-
 						<View style={CSS.input}>
-							<Text style={CSS.input__text}>E-mail:</Text>
+							<Text style={CSS.input__text}>Parola Tekrar:</Text>
 							<Input
-								caption="Bir e-mail adresi giriniz"
-								onChangeText={this.setEmail}
-								value={this.state.email}
-							/>
-						</View>
-
-						<View style={CSS.input}>
-							<Text style={CSS.input__text}>Parola:</Text>
-							<Input
-								caption="Bir parola giriniz"
-								onChangeText={this.setPassword}
+								caption="Parolayı tekrar giriniz"
+								onChangeText={this.setPasswordAgain}
 								secureTextEntry={true}
-								value={this.state.password}
+								value={this.state.password_again}
 							/>
 						</View>
 
-						{this.state.index === 1 &&
-						<>
-							<View style={CSS.input}>
-								<Text style={CSS.input__text}>Parola Tekrar:</Text>
-								<Input
-									caption="Parolayı tekrar giriniz"
-									onChangeText={this.setPasswordAgain}
-									secureTextEntry={true}
-									value={this.state.password_again}
-								/>
-							</View>
-
-								<CheckBox checked={this.state.checkbox} onChange={this.setCheckbox} style={CSS.checkbox}>
-									<Text>Kullanım koşullarını okudum ve kabul ediyorum.</Text>
-								</CheckBox>
-						</>
-						}
-
-						<View style={CSS.input}>
-							{this.state.index === 0 ?
-							<Button disabled={this.state.loading} onPress={this.requestLogin} style={CSS.button}>Giriş Yap</Button>
-							:
-							<Button disabled={this.state.loading} onPress={this.requestRegister} style={CSS.button}>Kayıt Ol</Button>
-							}
-						</View>
+							<CheckBox checked={this.state.checkbox} onChange={this.setCheckbox} style={CSS.checkbox}>
+								<Text>Kullanım koşullarını okudum ve kabul ediyorum.</Text>
+							</CheckBox>
 					</>
 					}
+
+					<View style={CSS.input}>
+						{this.state.index === 0 ?
+						<Button disabled={this.state.loading} onPress={this.requestLogin} style={CSS.button}>Giriş Yap</Button>
+						:
+						<Button disabled={this.state.loading} onPress={this.requestRegister} style={CSS.button}>Kayıt Ol</Button>
+						}
+					</View>
 				</View>
-			</View>
-		
+			</Loading>
 		);
 	}
 }
 
 const CSS = StyleSheet.create({
-	account: {
-		display: "flex",
-		height: "100%"
-	},
 	container: {
 		marginTop: "5%",
 		display: "flex",
 		alignItems: "center",
 		flex: 1
 	},
-	icon: {
+	home_icon: {
 		width: 48,
 		height: 48,
 		marginBottom: 6
 	},
 	input: {
 		marginBottom: "1%",
-		marginTop: "1%",
+		marginTop: "2%",
 		width: "90%"
 	},
 	input__text: {
@@ -193,10 +180,6 @@ const CSS = StyleSheet.create({
 	checkbox: {
 		marginBottom: "2%",
 		marginTop: "2%"
-	},
-	spinner: {
-		flex: 1,
-		justifyContent: "center"
 	}
 });
 

@@ -2,10 +2,11 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
+import Loading from "../loading/index.js";
 import Toast from "../toast";
 import TopNavigation from "../top-navigation";
 import Types from "../../utils/Types.js";
-import { Button, Divider, Icon, List, ListItem, Spinner } from "@ui-kitten/components";
+import { Button, Divider, Icon, List, ListItem } from "@ui-kitten/components";
 import { Image, StyleSheet, View } from "react-native";
 import { Pages } from "react-native-pages";
 
@@ -59,18 +60,12 @@ class AdvertDetails extends React.PureComponent {
 
 	render() {
 		return (
-			<View style={CSS.advert_details}>
-				<TopNavigation title="İlan Detayları" />
+			<Loading loading={this.state.loading}>
+				<View style={CSS.advert_details}>
+					<TopNavigation navigation={this.props.navigation} title="İlan Detayları" />
 
-				<View style={CSS.container}>
-					{this.state.loading ?
-					<View style={CSS.spinner}>
-						<Spinner size="large" />
-					</View>
-					:
-					<>
 						<View style={CSS.carousel}>
-							<Pages style={CSS.carousel}>
+							<Pages>
 								{this.state.advert.advertPictures?.map((image, index) => {
 									return <Image key={index} source={{uri: image}} style={CSS.images} />;
 								})}
@@ -85,36 +80,28 @@ class AdvertDetails extends React.PureComponent {
 						<List
 							data={Object.entries(this.state.advert)}
 							ItemSeparatorComponent={Divider}
-							renderItem={({item, index }) => {
+							renderItem={({item, index}) => {
 								if(Object.keys(Types).includes(item[0]))
 									return <ListItem key={index} description={item[1]} title={Types[item[0]]} />
 							}}
 						/>
-					</>
-					}
-				</View>
 
-				<BottomBar index={0} navigation={this.props.navigation} />
-			</View>
+					<BottomBar index={0} navigation={this.props.navigation} />
+				</View>
+			</Loading>
 		);
 	}
 }
 
 const CSS = StyleSheet.create({
 	advert_details: {
-		display: "flex",
 		height: "100%"
-	},
-	container: {
-		flex: 1
-	},
-	spinner: {
-		alignItems: "center",
-		flex: 1,
-		justifyContent: "center"
 	},
 	carousel: {
 		height: "25%"
+	},
+	images: {
+		height: "100%"
 	},
 	button_container: {
 		padding: "2%",
@@ -122,9 +109,6 @@ const CSS = StyleSheet.create({
 		display: "flex",
 		flexDirection: "row",
 		justifyContent: "space-between"
-	},
-	images: {
-		height: "100%"
 	}
 })
 
