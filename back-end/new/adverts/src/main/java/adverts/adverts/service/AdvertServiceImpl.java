@@ -62,7 +62,9 @@ public class AdvertServiceImpl implements IAdvertService {
 
         AdvertEntity advertEntity = modelMapper.map(advertDTO, AdvertEntity.class);
 
-        System.out.println("test -> "+ advertEntity.toString());
+        System.out.println("test -> " + advertEntity.toString());
+
+        advertEntity.setValidate(false);
         AdvertEntity savedAdvertEntity = advertDAO.save(advertEntity);
 
         if (savedAdvertEntity == null)
@@ -116,15 +118,17 @@ public class AdvertServiceImpl implements IAdvertService {
     }
 
     @Override
-    public Boolean deleteAdvert(String userId, String advertId) {
+    public Boolean deleteAdvert(String userId, String advertId, Boolean reject) {
 
         AdvertEntity advertEntity = advertDAO.findByAdvertId(advertId);
 
         if (advertEntity == null)
             return false;
 
-        if (!(userId.equals(advertEntity.getUserId())))
-            return false;
+        if (!reject) {
+            if (!(userId.equals(advertEntity.getUserId())))
+                return false;
+        }
 
         Boolean isDeleted = amazonS3ServiceClient.deletePictures(advertEntity.getAdvertPictures());
 
@@ -150,8 +154,10 @@ public class AdvertServiceImpl implements IAdvertService {
         List<AdvertDTO> returnValue = new ArrayList<>();
 
         for (AdvertEntity advertEntity : advertEntities) {
-            AdvertDTO tempAdvertDTO = modelMapper.map(advertEntity, AdvertDTO.class);
-            returnValue.add(tempAdvertDTO);
+            if (advertEntity.getValidate()) {
+                AdvertDTO tempAdvertDTO = modelMapper.map(advertEntity, AdvertDTO.class);
+                returnValue.add(tempAdvertDTO);
+            }
         }
 
         return returnValue;
@@ -171,12 +177,95 @@ public class AdvertServiceImpl implements IAdvertService {
         List<AdvertDTO> returnValue = new ArrayList<>();
 
         for (AdvertEntity advertEntity : advertEntities) {
-            AdvertDTO tempAdvertDTO = modelMapper.map(advertEntity, AdvertDTO.class);
-            returnValue.add(tempAdvertDTO);
+            if (advertEntity.getValidate()) {
+                AdvertDTO tempAdvertDTO = modelMapper.map(advertEntity, AdvertDTO.class);
+                returnValue.add(tempAdvertDTO);
+            }
         }
 
         return returnValue;
-        
+
+    }
+
+    @Override
+    public List<AdvertDTO> getAllAdverts() {
+
+        List<AdvertEntity> allAdvertEntities = new ArrayList<>();
+        advertDAO.findAll().forEach(allAdvertEntities::add);
+
+        if (allAdvertEntities.isEmpty())
+            return null;
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<AdvertDTO> returnValue = new ArrayList<>();
+
+        for (AdvertEntity advertEntity : allAdvertEntities) {
+            if (advertEntity.getValidate()) {
+                AdvertDTO tempAdvertDTO = modelMapper.map(advertEntity, AdvertDTO.class);
+                returnValue.add(tempAdvertDTO);
+            }
+        }
+
+        return returnValue;
+
+    }
+
+    @Override
+    public List<AdvertDTO> getNearLocationAdverts(Double lat1, Double lon1, Double lat2, Double lon2) {
+
+        List<AdvertEntity> allAdvertEntities = advertDAO.findNearLocationAdvertEntities(lat1, lon1, lat2, lon2);
+
+        if (allAdvertEntities.isEmpty())
+            return null;
+
+        System.out.println("lat1:" + lat1 + " lon1:" + lon1 + "lat2:" + lat2 + " lon1:" + lon2);
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<AdvertDTO> returnValue = new ArrayList<>();
+
+        for (AdvertEntity advertEntity : allAdvertEntities) {
+            if (advertEntity.getValidate()) {
+                AdvertDTO tempAdvertDTO = modelMapper.map(advertEntity, AdvertDTO.class);
+                returnValue.add(tempAdvertDTO);
+            }
+        }
+        return returnValue;
+    }
+
+    @Override
+    public List<AdvertDTO> getRejectedAdverts() {
+
+        List<AdvertEntity> allAdvertEntities = advertDAO.getRejectedAdverts();
+
+        if (allAdvertEntities.isEmpty())
+            return null;
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<AdvertDTO> returnValue = new ArrayList<>();
+
+        for (AdvertEntity advertEntity : allAdvertEntities) {
+            AdvertDTO tempAdvertDTO = modelMapper.map(advertEntity, AdvertDTO.class);
+            returnValue.add(tempAdvertDTO);
+        }
+        return returnValue;
+    }
+
+    @Override
+    public Boolean approveAdvert(String advertId) {
+        AdvertEntity advertEntity = advertDAO.findByAdvertId(advertId);
+
+        if (advertEntity == null)
+            return false;
+
+        advertEntity.setValidate(true);
+        advertDAO.save(advertEntity);
+        return true;
+
     }
 
 }

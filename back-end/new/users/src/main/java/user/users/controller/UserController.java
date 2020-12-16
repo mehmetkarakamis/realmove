@@ -200,7 +200,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/confirm-account", method = { RequestMethod.GET, RequestMethod.POST })
-    public ResponseEntity<Boolean> confirmUserAccount(@RequestParam("mailToken") String confirmationToken) {
+    public ResponseEntity<String> confirmUserAccount(@RequestParam("mailToken") String confirmationToken) {
         ConfirmationTokenEntity confirmationTokenEntity = confirmationTokenDAO
                 .findByConfirmationToken(confirmationToken);
 
@@ -208,10 +208,10 @@ public class UserController {
             UserDTO userDTO = userService.getUserByEmail(confirmationTokenEntity.getUserEntity().getEmail());
             userDTO.setEnabled(true);
             userService.saveUser(userDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(true);
+            return ResponseEntity.status(HttpStatus.OK).body("Your account has been activated.");
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Your account has not been activated!!!");
 
     }
 

@@ -87,4 +87,13 @@ public class AdvertResponseModel {
 
     @Getter @Setter
     private String redirect;
+
+    @Getter @Setter
+    private Boolean validate;
+
+    @Getter @Setter
+    private Double latitude;
+
+    @Getter @Setter
+    private Double longitude;
 }

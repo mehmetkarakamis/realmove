@@ -95,6 +95,15 @@ public class AdvertRequestModel {
 
     @Getter @Setter
     private List<String> location; //lokasyon
+
+    @Getter @Setter
+    private Boolean validate;
+
+    @Getter @Setter
+    private Double latitude;
+
+    @Getter @Setter
+    private Double longitude;
    
 
 }

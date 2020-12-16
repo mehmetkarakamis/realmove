@@ -95,6 +95,30 @@ public class AdvertsController {
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
+    @GetMapping("/all")
+        public ResponseEntity<List<AdvertResponseModel>> getAllAdverts(){
+
+        List<AdvertDTO> allAdvertDTOs = advertService.getAllAdverts();
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<AdvertResponseModel> returnValue = new ArrayList<>();
+
+        if(allAdvertDTOs == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+        for (AdvertDTO tempAdvertDTOs : allAdvertDTOs) {
+            AdvertResponseModel tempResponse = modelMapper.map(tempAdvertDTOs, AdvertResponseModel.class);
+            tempResponse.setRedirect("Inside AdvertsController.java");
+            returnValue.add(tempResponse);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+
+        }
+    
+
     @PatchMapping
     public ResponseEntity<AdvertResponseModel> updateAdvert(@ModelAttribute AdvertRequestModel advertRequestModel,
             @RequestParam String advertId, @RequestPart MultipartFile[] advertPictures,
@@ -131,7 +155,7 @@ public class AdvertsController {
         if (userId == null || advertId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 
-        Boolean returnValue = advertService.deleteAdvert(userId, advertId);
+        Boolean returnValue = advertService.deleteAdvert(userId, advertId, false);
 
         if (returnValue == false)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
@@ -182,6 +206,86 @@ public class AdvertsController {
             AdvertResponseModel tempResponse = modelMapper.map(tempAdvertDTOs, AdvertResponseModel.class);
             returnValue.add(tempResponse);
         }
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+    @GetMapping("/search/near/locations")
+    public ResponseEntity<List<AdvertResponseModel>> getNearLocationAdverts(@RequestParam Double latitude, @RequestParam Double longitude, @RequestParam Double range){
+
+        Double lat1 = latitude - (range * 0.01);
+        Double lon1 = longitude - (range * 0.01);
+        Double lat2 = latitude + (range * 0.01);
+        Double lon2 = longitude + (range * 0.01);
+
+        System.out.println("lat1:"+ lat1 + " lon1:"+lon1+"lat2:"+ lat2 + " lon1:"+lon2);
+
+        List<AdvertDTO> advertDTOs = advertService.getNearLocationAdverts(lat1,lon1,lat2,lon2);
+
+        if (advertDTOs == null)
+            return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<AdvertResponseModel> returnValue = new ArrayList<>();
+
+        for (AdvertDTO tempAdvertDTOs : advertDTOs) {
+            AdvertResponseModel tempResponse = modelMapper.map(tempAdvertDTOs, AdvertResponseModel.class);
+            returnValue.add(tempResponse);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+
+    @GetMapping("/newAdverts")
+    public ResponseEntity<List<AdvertResponseModel>> getRejectedAdverts(){
+
+        List<AdvertDTO> allAdvertDTOs = advertService.getRejectedAdverts();
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<AdvertResponseModel> returnValue = new ArrayList<>();
+
+        if(allAdvertDTOs == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+        for (AdvertDTO tempAdvertDTOs : allAdvertDTOs) {
+            AdvertResponseModel tempResponse = modelMapper.map(tempAdvertDTOs, AdvertResponseModel.class);
+            tempResponse.setRedirect("Inside AdvertsController.java");
+            returnValue.add(tempResponse);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    }
+    @GetMapping("/newAdverts/approve")
+    public ResponseEntity<Boolean> approveAdvert(@RequestParam String advertId){
+
+        if (advertId == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+
+        Boolean isTrue = advertService.approveAdvert(advertId);
+
+        if(isTrue == false){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(true);
+    }
+
+    @DeleteMapping("/newAdverts/reject")
+    public ResponseEntity<Boolean> rejectAdvert(@RequestHeader(name = "Authorization") String token,
+            @RequestParam String advertId) {
+
+        String userId = getInformation(token);
+
+        if (userId == null || advertId == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+
+        Boolean returnValue = advertService.deleteAdvert(userId, advertId, true);
+
+        if (returnValue == false)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
