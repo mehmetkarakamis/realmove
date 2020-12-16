@@ -23,6 +23,21 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const Map = (props) => {
 
+  requestAdverts = () => {
+		this.setState({ loading: true }, async() => {
+			axios.get("/adverts-ws/api/advert/all", {
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
+			})
+			.then((response) => {
+				this.setState({ advert_list: response.data });
+			})
+			.catch(() => {
+				Toast.error("Sunucuya bağlanırken hata ile karşılaşıldı!");
+			})
+			.finally(() => { this.setState({ loading: false }); });
+		});
+	}
+
   let region = {
     latitude: LATITUDE,
     longitude: LONGITUDE,
@@ -37,21 +52,21 @@ const Map = (props) => {
         initialRegion={region}
         style={styles.map}
       >
-        {Adverts.map(marker => (
+        {this.state.advert_list.map(marker => (
           <Marker
             key={marker.id}
             coordinate={{
-              latitude: marker.coordinates.latitude,
-              longitude: marker.coordinates.longitude
+              latitude: marker.latitude,
+              longitude: marke.longitude
             }}
           />
         ))}
       </MapView>
       <FlatList
-        data={Adverts}
+        data={this.state.advert_list}
         renderItem={({ item }) => <TouchableOpacity style={{ backgroundColor: 'transparent' }} onPress={() => _mapView.animateToRegion({
-          latitude: item.coordinates.latitude,
-          longitude: item.coordinates.longitude,
+          latitude: item.latitude,
+          longitude: item.longitude,
           latitudeDelta: 0.02,
           longitudeDelta: 0.02
         }, 1000)}>

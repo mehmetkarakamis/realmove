@@ -59,6 +59,7 @@ class Login extends React.PureComponent {
 			if(this.state.checkbox === false) throw String("Kullanım koşulları kabul edilmelidir!");
 		}
 		catch(error) {
+			console.log(error);
 			Toast.error(error);
 			return;
 		}
@@ -74,6 +75,7 @@ class Login extends React.PureComponent {
 				this.setState({ index: 0 });
 			})
 			.catch(() => {
+			
 				Toast.error("Bu e-mail adresi zaten sisteme kayıtlı!");
 			})
 			.finally(() => { this.setState({ loading: false }); });
@@ -92,6 +94,7 @@ class Login extends React.PureComponent {
 
 	render() {
 		return (
+			
 			<View style={CSS.account}>
 				<BottomNavigation class={CSS.top_navigation} onSelect={this.setSelectedIndex} selectedIndex={this.state.index}>
 					<BottomNavigationTab title="Giriş Yap" />
@@ -156,6 +159,7 @@ class Login extends React.PureComponent {
 					}
 				</View>
 			</View>
+		
 		);
 	}
 }

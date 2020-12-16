@@ -4,7 +4,7 @@ import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { createStackNavigator } from "@react-navigation/stack";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View,  } from "react-native";
 import * as eva from "@eva-design/eva";
 
 const Stack = createStackNavigator();
@@ -20,6 +20,7 @@ import AdvertDetails from "./components/advert-details";
 
 export default () => (
 	<>
+	
 		<IconRegistry icons={EvaIconsPack} />
 		<ApplicationProvider {...eva} theme={eva.light}>
 			<View style={CSS.root}>
@@ -37,6 +38,7 @@ export default () => (
 			</View>
 		</ApplicationProvider>
 		<Toast ref={(ref) => Toast.setRef(ref)} />
+		
 	</>
 );
 
