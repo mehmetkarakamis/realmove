@@ -26,11 +26,12 @@ export default () => (
 			<View style={CSS.root}>
 				<NavigationContainer>
 					<Stack.Navigator screenOptions={{ headerShown: false }}>
+							
 							<Stack.Screen component={Login} name="Login" />
+							<Stack.Screen component={Map} name="Map" />
 							<Stack.Screen component={List} name="List" />
 							<Stack.Screen component={AdvertDetails} name="AdvertDetails" />
 							<Stack.Screen component={Add} name="Add" />
-							<Stack.Screen component={Map} name="Map" />
 							<Stack.Screen component={Search} name="Search" />
 							<Stack.Screen component={Profile} name="Profile" />
 					</Stack.Navigator>

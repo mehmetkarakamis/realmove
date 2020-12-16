@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
 import BottomBar from "../bottom-bar";
+import axios from "../../utils/Axios.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import GetLocation from 'react-native-get-location';
+
+
+
 import {
   StyleSheet,
   View,
@@ -7,82 +13,185 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
-  Image
+  Image,
+  Button
 } from 'react-native';
 
+
 import MapView, { Marker } from 'react-native-maps';
-import Adverts from "../../adverts.json";
+// import Adverts from "../../adverts.json";
 
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width;
 const LATITUDE = 39.874252;
 const LONGITUDE = 32.747575;
-const LATITUDE_DELTA = 0.0922;
+const LATITUDE_DELTA = 0.51;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const Map = (props) => {
-
-  requestAdverts = () => {
-		this.setState({ loading: true }, async() => {
-			axios.get("/adverts-ws/api/advert/all", {
-				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
-			})
-			.then((response) => {
-				this.setState({ advert_list: response.data });
-			})
-			.catch(() => {
-				Toast.error("Sunucuya bağlanırken hata ile karşılaşıldı!");
-			})
-			.finally(() => { this.setState({ loading: false }); });
-		});
-	}
-
-  let region = {
-    latitude: LATITUDE,
-    longitude: LONGITUDE,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA
-  }
-
-  return (
-    <View style={{ flex: 1 }}>
-      <MapView
-        ref={(mapView) => { _mapView = mapView; }}
-        initialRegion={region}
-        style={styles.map}
-      >
-        {this.state.advert_list.map(marker => (
-          <Marker
-            key={marker.id}
-            coordinate={{
-              latitude: marker.latitude,
-              longitude: marke.longitude
-            }}
-          />
-        ))}
-      </MapView>
-      <FlatList
-        data={this.state.advert_list}
-        renderItem={({ item }) => <TouchableOpacity style={{ backgroundColor: 'transparent' }} onPress={() => _mapView.animateToRegion({
-          latitude: item.latitude,
-          longitude: item.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02
-        }, 1000)}>
-          <View style={styles.listItemContainer}>
-            <Text style={styles.pokeItemHeader}>{item.name}</Text>
-            <Image source={{ uri: item.thumbnail }}
-              style={styles.pokeImage} />
-          </View>
-        </TouchableOpacity>}
-        keyExtractor={(item) => item.id}
-      />
-      <BottomBar index={1} navigation={props.navigation} />
-    </View>
-  )
+const coordDolmabahce = {
+  latitude: 41.0391683,
+  longitude: 28.9982707,
+  latitudeDelta: 0.01,
+  longitudeDelta: 0.01,
 };
 
+
+
+class Map extends React.PureComponent {
+	constructor() {
+		super();
+		this.state = {
+      loading: true,
+      region: {
+        latitude: 100,
+        longitude: 0,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      },
+      currentRegion: {
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      }
+  }
+}
+
+_requestLocation = () => {
+  this.setState({ loading: true, location: null });
+
+  GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 150000,
+  })
+      .then(location => {
+          this.setState({
+              currentRegion: location,
+              loading: false,
+          });
+          console.log("current");
+          console.log(this.state.currentRegion);
+        
+      })
+      .catch(ex => {
+          const { code, message } = ex;
+          console.warn(code, message);
+          if (code === 'CANCELLED') {
+              Alert.alert('Location cancelled by user or by another request');
+          }
+          if (code === 'UNAVAILABLE') {
+              Alert.alert('Location service is disabled or unavailable');
+          }
+          if (code === 'TIMEOUT') {
+              Alert.alert('Location request timed out');
+          }
+          if (code === 'UNAUTHORIZED') {
+              Alert.alert('Authorization denied');
+          }
+          this.setState({
+              location: null,
+              loading: false,
+          });
+      });
+}
+
+
+
+componentDidMount() {
+  console.log("girdi");
+  this.requestAdverts();
+  console.log("çıktı");
+
+  GetLocation.getCurrentPosition({
+    enableHighAccuracy: true,
+    timeout: 15000,
+  })
+.then(location => {
+    console.log(location);
+    this.setState({...this.state.currentRegion, longitude: location.longitude});
+    this.setState({...this.state.currentRegion, latitude: location.latitude});
+
+})
+.catch(error => {
+    const { code, message } = error;
+    console.warn(code, message);
+})
+
+}
+
+
+requestAdverts = () => {
+  this.setState({ loading: true }, async() => {
+    axios.get("/adverts-ws/api/advert/all", {
+      headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
+    })
+    .then((response) => {
+      this.setState({ adverts: response.data });
+      
+    })
+    .catch(() => {
+      Toast.error("Sunucuya bağlanırken hata ile karşılaşıldı!");
+    })
+    .finally(() => { this.setState({ loading: false }); });
+  });
+}
+  
+
+
+
+  render() {
+    return (
+      
+      <View style={{ flex: 1 }}>
+
+        <MapView
+          ref={(mapView) => { _mapView = mapView; }}
+          initialRegion={this.state.region}
+          style={styles.map}
+        >
+          {this.state.currentRegion !== undefined && <Marker coordinate={this.state.currentRegion} />}
+          {this.state.adverts && this.state.adverts.map(marker => (
+            <Marker
+              key={marker.id}
+              coordinate={{
+                latitude: marker.latitude,
+                longitude: marker.longitude
+              }}
+            />
+          ))}
+        </MapView>
+        <Button
+                        disabled={this.loading}
+                        title="Yakındakileri Göster"
+                        onPress={() => _mapView.animateToRegion({
+                          latitude: this.state.currentRegion,
+                          longitude: this.state.currentRegion,
+                          latitudeDelta: 0.02,
+                          longitudeDelta: 0.02
+                        }, 1000)}
+                    />
+        <FlatList
+          data={this.state.adverts}
+          renderItem={({ item }) => <TouchableOpacity style={{ backgroundColor: 'transparent' }} onPress={() => _mapView.animateToRegion({
+            latitude: item.latitude,
+            longitude: item.longitude,
+            latitudeDelta: 0.02,
+            longitudeDelta: 0.02
+          }, 1000)}>
+            <View style={styles.listItemContainer}>
+              <Text style={styles.pokeItemHeader}>{item.description}</Text>
+              <Image source={{ uri: item.advertPictures[0] }}
+                style={styles.pokeImage} />
+            </View>
+          </TouchableOpacity>}
+          keyExtractor={(item) => item.advertId}
+        />
+        <BottomBar index={1} navigation={this.props.navigation} />
+      </View>
+    )
+  };
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -116,6 +225,6 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40
   }
-});
+})
 
-export default Map;
+export default Map; 
