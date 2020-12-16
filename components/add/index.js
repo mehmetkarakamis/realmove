@@ -2,12 +2,14 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "../../utils/Axios.js";
 import BottomBar from "../bottom-bar";
-import ImagePicker from "react-native-image-picker";
+import { launchImageLibrary } from "react-native-image-picker";
 import TopNavigation from "../top-navigation";
 import Loading from "../loading";
 import Toast from "../toast";
 import { Button, IndexPath, Input, Select, SelectItem } from '@ui-kitten/components';
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pages } from "react-native-pages";
+import { Image, ScrollView, StyleSheet, View, Platform } from "react-native";
+import { isEmpty } from "../../utils/InputHandler.js";
 
 const cities = ["Ankara"];
 const district = [
@@ -67,14 +69,17 @@ class Add extends React.Component {
 			status: new IndexPath(0),
 			studentOrSinglePerson: "",
 			front: "",
-			inTheSite: new IndexPath(0)
+			inTheSite: new IndexPath(0),
+			advertPictures: []
 		}
 	}
 
 	handlePhotoSelect = () => {
-		ImagePicker.launchImageLibrary({ noData: true }, response => {
+		const advertPictures = [...this.state.advertPictures];
+		launchImageLibrary({ noData: true }, (response) => {
 			if(response.uri) {
-				this.setState({ photo: response });
+				advertPictures.push(response);
+				this.setState({ advertPictures });
 			}
 		});
 	}
@@ -100,6 +105,13 @@ class Add extends React.Component {
 		data.append("status", statuses[this.state.status.row])
 		data.append("studentOrSinglePerson", this.state.studentOrSinglePerson);
 		data.append("front", this.state.front);
+		for(const picture of this.state.advertPictures) {
+			data.append("advertPictures", {
+				name: picture.fileName,
+				type: picture.type,
+				uri: Platform.OS === "android" ? picture.uri : picture.uri.replace("file://", "")
+			});
+		}
 		this.setState({ loading: true }, async() => {
 			axios.post("/adverts-ws/api/advert", data, {
 				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
@@ -159,6 +171,16 @@ class Add extends React.Component {
 		return (
 			<Loading loading={this.state.loading}>
 				<TopNavigation navigation={this.props.navigation} title="Yeni İlan Ekle" />
+
+				{!isEmpty(this.state.advertPictures) &&
+				<View style={CSS.carousel}>
+					<Pages>
+						{this.state.advertPictures?.map((image, index) => {
+							return <Image key={index} source={{uri: image.uri}} style={CSS.images} />;
+						})}
+					</Pages>
+				</View>
+				}
 
 				<ScrollView>
 					<View style={CSS.container}>
@@ -350,7 +372,7 @@ class Add extends React.Component {
 						</Select>
 
 						<View style={CSS.button_container}>
-							<Button onPress={this.handlePhotoSelect}>Fotoğraf Yükle</Button>
+							<Button onPress={this.handlePhotoSelect} size="small" style={CSS.button}>Fotoğraf Yükle</Button>
 							<Button onPress={this.requestAdd} size="small" style={CSS.button}>Gönder</Button>
 						</View>
 					</View>
@@ -363,6 +385,12 @@ class Add extends React.Component {
 }
 
 const CSS = StyleSheet.create({
+	carousel: {
+		height: "25%"
+	},
+	images: {
+		height: "100%"
+	},
 	container: {
 		padding: "2%"
 	},

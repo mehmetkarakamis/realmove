@@ -20,6 +20,10 @@ class Login extends React.PureComponent {
 		}
 	}
 
+	async componentDidMount() {
+		if(await AsyncStorage.getItem("@token")) this.props.navigation.replace("List");
+	}
+
 	requestLogin = () => {
 		// Validation
 		try {
