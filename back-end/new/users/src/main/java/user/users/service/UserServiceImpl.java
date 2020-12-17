@@ -100,11 +100,11 @@ public class UserServiceImpl implements IUserService {
         /// Sent the email to the user.
         emailSenderService.sendEmail(mailMessage);
 
-        /// Created our returnValue to sent it to the frontend.
+       /// Created our returnValue to sent it to the frontend.
         UserDTO returnValue = modelMapper.map(userEntity, UserDTO.class);
 
         /// Sent returnValue to the UserController.
-        return returnValue;
+        return returnValue; 
     }
 
     @Override
