@@ -34,7 +34,7 @@ public class ConversationEntity implements Serializable {
     
     @Getter @Setter
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name= "messageId")
+    @JoinColumn(name= "conversationId")
     private List<MessageEntity> messageList;
 
     @Getter @Setter
