@@ -24,6 +24,10 @@ public class MessageResponseModel {
     @Setter
     private String content;
 
+    @NotBlank
+    @Getter @Setter
+    private String conversationId;
+
     @Getter
     @Setter
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")

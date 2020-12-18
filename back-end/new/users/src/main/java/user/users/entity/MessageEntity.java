@@ -42,5 +42,5 @@ public class MessageEntity implements Serializable {
 
     @Column(nullable = false)
     @Getter @Setter
-    private Long advertId;
+    private Long conversationId;
 }
