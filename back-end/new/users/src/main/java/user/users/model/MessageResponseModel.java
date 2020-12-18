@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class MessageResponseModel {
-    @Getter
-    @Setter
-    private Long id;
+
+    @Getter @Setter
+    private String messageId;
 
     @Getter
     @Setter

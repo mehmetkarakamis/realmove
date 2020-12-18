@@ -16,6 +16,9 @@ public class MessageDTO implements Serializable {
     @Setter
     private Long id;
 
+    @Getter @Setter
+    private String messageId;
+
     @Getter
     @Setter
     private Long fromUserId;

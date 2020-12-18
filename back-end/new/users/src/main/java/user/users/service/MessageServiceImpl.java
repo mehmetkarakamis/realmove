@@ -1,23 +1,32 @@
 package user.users.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import user.users.DAO.MessageDAO;
 import user.users.DTO.MessageDTO;
 import user.users.entity.MessageEntity;
 
+@Service
 public class MessageServiceImpl implements IMessageService {
 
     private MessageDAO messageDAO;
 
+    @Autowired
+    public MessageServiceImpl(MessageDAO messageDAO){
+        this.messageDAO = messageDAO;
+    }
+
     @Override
     public MessageDTO sendMessage(MessageDTO messageDTO) {
         
-        messageDTO.setId(UUID.randomUUID().toString());
+        messageDTO.setMessageId(UUID.randomUUID().toString());
 
         /// Create model mapper to create our UserEntity.
         ModelMapper modelMapper = new ModelMapper();
@@ -33,7 +42,6 @@ public class MessageServiceImpl implements IMessageService {
         /// Sent returnValue to the UserController.
         return returnValue;
 
-        return null;
     }
 
     @Override
@@ -46,8 +54,12 @@ public class MessageServiceImpl implements IMessageService {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        List<MessageDTO> returnValue = modelMapper.map(messageEntity, List<MessageDTO>().class);
+        List<MessageDTO> returnValue = new ArrayList<>();
 
+        for (MessageEntity tempMessageEntity : messageEntity) {
+            MessageDTO tempResponse = modelMapper.map(tempMessageEntity, MessageDTO.class);
+            returnValue.add(tempResponse);
+        }
         return returnValue;
     }
 
@@ -61,8 +73,12 @@ public class MessageServiceImpl implements IMessageService {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        List<MessageDTO> returnValue = modelMapper.map(messageEntity, List<MessageDTO>().class);
+        List<MessageDTO> returnValue = new ArrayList<>();
 
+        for (MessageEntity tempMessageEntity : messageEntity) {
+            MessageDTO tempResponse = modelMapper.map(tempMessageEntity, MessageDTO.class);
+            returnValue.add(tempResponse);
+        }
         return returnValue;
     }
 

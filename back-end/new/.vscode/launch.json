@@ -1,0 +1,64 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ConfigServerApplication<configserver>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "config.server.configserver.ConfigServerApplication",
+            "projectName": "configserver",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-EurekaApplication<eureka>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "eureka.discovery.server.eureka.EurekaApplication",
+            "projectName": "eureka",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AdvertsApplication<adverts>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "adverts.adverts.AdvertsApplication",
+            "projectName": "adverts",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AmazonS3BucketApplication<s3bucket>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "amazon.s3.bucket.s3bucket.AmazonS3BucketApplication",
+            "projectName": "s3bucket",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-UsersApplication<users>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "user.users.UsersApplication",
+            "projectName": "users",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ZuulGatewayApplication<gateway>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "zuul.gateway.gateway.ZuulGatewayApplication",
+            "projectName": "gateway",
+            "args": ""
+        }
+    ]
+}

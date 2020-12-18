@@ -7,6 +7,7 @@ import user.users.DTO.MessageDTO;
 import user.users.model.MessageResponseModel;
 import user.users.service.IMessageService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -31,7 +32,7 @@ public class MessageController {
 
     
     @GetMapping("/getUserMessageList")
-    public ResponseEntity<MessageResponseModel> getUserMessageList(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<List<MessageResponseModel>> getUserMessageList(@RequestHeader(name = "Authorization") String token,
                                         @RequestParam String toUserId) {
 
         if(toUserId == null)
@@ -45,16 +46,18 @@ public class MessageController {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        MessageResponseModel returnValue = modelMapper.map(tempMessageList, List<MessageResponseModel>().class);
+        List<MessageResponseModel> returnValue = new ArrayList<>();
 
-        returnValue.setRedirect("Inside MessageController.java");
-
+        for (MessageDTO tempMessageDTO : tempMessageList) {
+            MessageResponseModel tempResponse = modelMapper.map(tempMessageDTO, MessageResponseModel.class);
+            returnValue.add(tempResponse);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 
     }
 
     @GetMapping("/getAdvertMessages")
-    public ResponseEntity<MessageResponseModel> getAdvertMessages(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<List<MessageResponseModel>> getAdvertMessages(@RequestHeader(name = "Authorization") String token,
                                         @RequestParam String toUserId, @RequestParam String advertId) {
 
         if(toUserId == null)
@@ -68,10 +71,12 @@ public class MessageController {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        MessageResponseModel returnValue = modelMapper.map(tempMessageList, List<MessageResponseModel>().class);
+        List<MessageResponseModel> returnValue = new ArrayList<>();
 
-        returnValue.setRedirect("Inside MessageController.java");
-
+        for (MessageDTO tempMessageDTO : tempMessageList) {
+            MessageResponseModel tempResponse = modelMapper.map(tempMessageDTO, MessageResponseModel.class);
+            returnValue.add(tempResponse);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 
     }
