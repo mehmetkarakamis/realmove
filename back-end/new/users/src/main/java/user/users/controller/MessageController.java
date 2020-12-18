@@ -3,6 +3,7 @@ package user.users.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import user.users.DAO.ConfirmationTokenDAO;
+import user.users.DTO.ConversationDTO;
 import user.users.DTO.MessageDTO;
 import user.users.model.MessageRequestModel;
 import user.users.model.MessageResponseModel;
@@ -37,9 +38,10 @@ public class MessageController {
     ConfirmationTokenDAO confirmationTokenDAO;
 
     
-    @GetMapping("/getUserMessageList")
-    public ResponseEntity<List<MessageResponseModel>> getUserMessageList(@RequestHeader(name = "Authorization") String token,
-                                        @RequestParam String toUserId) {
+    @GetMapping("/getConversationMessages")
+    public ResponseEntity<List<MessageResponseModel>> getConversationMessages(
+                                        @RequestHeader(name = "Authorization") String token,
+                                        @RequestParam String conversationId) {
 
         if(toUserId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -62,14 +64,15 @@ public class MessageController {
 
     }
 
-    @GetMapping("/getAdvertMessages")
-    public ResponseEntity<List<MessageResponseModel>> getAdvertMessages(@RequestHeader(name = "Authorization") String token,
-                                        @RequestParam String toUserId, @RequestParam String advertId) {
+    @GetMapping("/getConversationList")
+    public ResponseEntity<List<MessageResponseModel>> getConversationList(
+                                        @RequestHeader(name = "Authorization") String token,
+                                        @RequestParam String toUserId) {
 
         if(toUserId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
-        List<MessageDTO> tempMessageList = messageService.getMessages(toUserId);
+        List<ConversationDTO> tempMessageList = messageService.getMessages(toUserId);
 
         if (tempMessageList == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -88,7 +91,7 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponseModel> createUser(@Valid @ModelAttribute MessageRequestModel messageRequestModel) {
+    public ResponseEntity<MessageResponseModel> sendMessage(@Valid @ModelAttribute MessageRequestModel messageRequestModel) {
 
         /// Created our modelMapper to map messageRequestModel to userDTO.
         ModelMapper modelMapper = new ModelMapper();
@@ -110,7 +113,7 @@ public class MessageController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Boolean> deleteAdvert(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<Boolean> deleteMessage(@RequestHeader(name = "Authorization") String token,
             @RequestParam String messageId) {
 
         if (messageId == null)
