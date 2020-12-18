@@ -24,9 +24,6 @@ public class MessageResponseModel {
     @Setter
     private String content;
 
-    @Getter @Setter
-    private Long advertId;
-
     @Getter
     @Setter
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")

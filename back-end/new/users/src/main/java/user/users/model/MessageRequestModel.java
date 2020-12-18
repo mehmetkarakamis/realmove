@@ -19,8 +19,9 @@ public class MessageRequestModel {
     @Getter @Setter
     private String content;
 
-    @NotBlank
-    @Getter @Setter
-    private Long advertId;
+    @Getter
+    @Setter
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    private Date dateTime;
     
 }
