@@ -11,5 +11,6 @@ public interface IMessageService {
     List<MessageDTO> getMessages(String toUserId);
     // get one user's message list (from all adverts)
     List<MessageDTO> getMessageList(String toUserId);
-    
+    // Delete message
+    Boolean deleteMessage(String messageId, String toUserId);
 }

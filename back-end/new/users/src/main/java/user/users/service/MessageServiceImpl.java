@@ -82,6 +82,20 @@ public class MessageServiceImpl implements IMessageService {
         return returnValue;
     }
 
-    
+    @Override
+    public Boolean deleteMessage(String messageId, String toUserId) {
+        
+        MessageEntity messageEntity = messageDAO.findById(Long.parseLong(messageId));
+
+        if (messageEntity == null)
+            return false;
+
+        if (!(toUserId.equals(messageEntity.getToUserId())))
+            return false;
+
+        messageDAO.delete(messageEntity);
+
+        return true;
+    }
 
 }
