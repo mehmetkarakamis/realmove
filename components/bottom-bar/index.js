@@ -30,7 +30,7 @@ class BottomBar extends React.PureComponent {
 		return (
 			<BottomNavigation onSelect={this.setSelectedIndex} selectedIndex={this.props.index} style={CSS.bottomBar}>
 				<BottomNavigationTab icon={vitrinIcon} title="Vitrin" />
-				<BottomNavigationTab icon={mapIcon} title="Hariya" />
+				<BottomNavigationTab icon={mapIcon} title="Harita" />
 				<BottomNavigationTab icon={aramaIcon} title="Arama" />
 				<BottomNavigationTab icon={profilIcon} title="Profil" />
 			</BottomNavigation>
