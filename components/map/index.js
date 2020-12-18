@@ -103,14 +103,14 @@ componentDidMount() {
   this.requestAdverts();
   console.log("çıktı");
 
+
   GetLocation.getCurrentPosition({
     enableHighAccuracy: true,
     timeout: 15000,
   })
 .then(location => {
     console.log(location);
-    this.setState({...this.state.currentRegion, longitude: location.longitude});
-    this.setState({...this.state.currentRegion, latitude: location.latitude});
+    this.setState({latitude: location.latitude, longitude: location.longitude});
 
 })
 .catch(error => {
@@ -154,19 +154,31 @@ requestAdverts = () => {
           {this.state.adverts && this.state.adverts.map(marker => (
             <Marker
               key={marker.id}
+              image={require('./home.png')}
+              width={1}
+              height={1}
               coordinate={{
                 latitude: marker.latitude,
                 longitude: marker.longitude
               }}
             />
           ))}
+          {(this.state.latitude && this.state.longitude) &&
+            <Marker coordinate={{
+              latitude: this.state.latitude,
+              longitude: this.state.longitude
+            }}
+            >
+            </Marker>
+            
+          }
         </MapView>
         <Button
                         disabled={this.loading}
                         title="Yakındakileri Göster"
                         onPress={() => _mapView.animateToRegion({
-                          latitude: this.state.currentRegion,
-                          longitude: this.state.currentRegion,
+                          latitude: this.state.latitude,
+                          longitude: this.state.longitude,
                           latitudeDelta: 0.02,
                           longitudeDelta: 0.02
                         }, 1000)}
@@ -176,8 +188,8 @@ requestAdverts = () => {
           renderItem={({ item }) => <TouchableOpacity style={{ backgroundColor: 'transparent' }} onPress={() => _mapView.animateToRegion({
             latitude: item.latitude,
             longitude: item.longitude,
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01
           }, 1000)}>
             <View style={styles.listItemContainer}>
               <Text style={styles.pokeItemHeader}>{item.description}</Text>
