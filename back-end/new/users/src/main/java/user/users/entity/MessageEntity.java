@@ -1,12 +1,19 @@
 package user.users.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,19 +35,20 @@ public class MessageEntity implements Serializable {
     @Getter @Setter
     private String messageId;
 
-    @Column(nullable = false, length = 120, unique = true)
+    @Column(nullable = false)
     @Getter @Setter
-    private Long fromUserId;
-    
-    @Column(nullable = false, unique = true)
-    @Getter @Setter
-    private Long toUserId;
+    private String userId;
 
     @Column(nullable = false)
     @Getter @Setter
     private String content;
 
-    @Column(nullable = false)
     @Getter @Setter
-    private Long conversationId;
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private Date dateTime;
+
+    @Getter @Setter
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name="conversation_id", nullable=false)
+    private ConversationEntity conversation;
 }

@@ -3,6 +3,8 @@ package user.users.DTO;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
@@ -12,27 +14,31 @@ public class MessageDTO implements Serializable {
 
     private static final long serialVersionUID = -2359765435612538065L;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private Long id;
 
     @Getter @Setter
     private String messageId;
 
-    @Getter
-    @Setter
-    private Long fromUserId;
+    @Getter @Setter
+    private String userId;
 
-    @Getter
-    @Setter
-    private Long toUserId;
+    @JsonIgnore
+    @Getter @Setter
+    private String fromUserId;
 
-    @Getter
-    @Setter
+    @JsonIgnore
+    @Getter @Setter
+    private String toUserId;
+
+    @Getter @Setter
     private String content;
 
-    @Getter
-    @Setter
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    @JsonIgnore
+    @Getter @Setter
+    private String advertId;
+
+    @Getter @Setter
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date dateTime;
 }

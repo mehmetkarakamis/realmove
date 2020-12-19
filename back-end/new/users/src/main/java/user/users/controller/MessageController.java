@@ -6,7 +6,7 @@ import user.users.DAO.ConfirmationTokenDAO;
 import user.users.DTO.ConversationDTO;
 import user.users.DTO.MessageDTO;
 import user.users.model.MessageRequestModel;
-import user.users.model.MessageResponseModel;
+import user.users.model.ConversationResponseModel;
 import user.users.service.IMessageService;
 
 import java.util.ArrayList;
@@ -17,6 +17,8 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,47 +34,57 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MessageController {
     
     @Autowired
+    private Environment environment;
+
+    @Autowired
     IMessageService messageService;
 
     @Autowired
     ConfirmationTokenDAO confirmationTokenDAO;
 
+    public String getInformation(String token) {
+        if(token == null)
+            return null;
+
+        System.out.println(environment.getProperty("authorization.token.header.prefix"));
+        String myToken = token.replace(environment.getProperty("authorization.token.header.prefix"), "");
+        String information = Jwts.parser().setSigningKey(environment.getProperty("token.secret")).parseClaimsJws(myToken)
+                .getBody().getSubject();
+        return information;
+    }
+
     
     @GetMapping("/getConversationMessages")
-    public ResponseEntity<List<MessageResponseModel>> getConversationMessages(
+    public ResponseEntity<ConversationResponseModel> getConversationMessages(
                                         @RequestHeader(name = "Authorization") String token,
                                         @RequestParam String conversationId) {
 
-        if(toUserId == null)
+        if(conversationId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
-        List<MessageDTO> tempMessageList = messageService.getMessageList(toUserId);
+        ConversationDTO tempConversation = messageService.getConversation(conversationId);
 
-        if (tempMessageList == null)
+        if (tempConversation == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        List<MessageResponseModel> returnValue = new ArrayList<>();
+        ConversationResponseModel returnValue = modelMapper.map(tempConversation, ConversationResponseModel.class);
 
-        for (MessageDTO tempMessageDTO : tempMessageList) {
-            MessageResponseModel tempResponse = modelMapper.map(tempMessageDTO, MessageResponseModel.class);
-            returnValue.add(tempResponse);
-        }
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
 
     }
 
     @GetMapping("/getConversationList")
-    public ResponseEntity<List<MessageResponseModel>> getConversationList(
+    public ResponseEntity<List<ConversationResponseModel>> getConversationList(
                                         @RequestHeader(name = "Authorization") String token,
-                                        @RequestParam String toUserId) {
+                                        @RequestParam String userId) {
 
-        if(toUserId == null)
+        if(userId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
-        List<ConversationDTO> tempMessageList = messageService.getMessages(toUserId);
+        List<ConversationDTO> tempMessageList = messageService.getConversationList(userId);
 
         if (tempMessageList == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -80,10 +92,10 @@ public class MessageController {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        List<MessageResponseModel> returnValue = new ArrayList<>();
+        List<ConversationResponseModel> returnValue = new ArrayList<>();
 
-        for (MessageDTO tempMessageDTO : tempMessageList) {
-            MessageResponseModel tempResponse = modelMapper.map(tempMessageDTO, MessageResponseModel.class);
+        for (ConversationDTO tempConversationDTO : tempMessageList) {
+            ConversationResponseModel tempResponse = modelMapper.map(tempConversationDTO, ConversationResponseModel.class);
             returnValue.add(tempResponse);
         }
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
@@ -91,7 +103,7 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponseModel> sendMessage(@Valid @ModelAttribute MessageRequestModel messageRequestModel) {
+    public ResponseEntity<ConversationResponseModel> sendMessage(@Valid @ModelAttribute MessageRequestModel messageRequestModel) {
 
         /// Created our modelMapper to map messageRequestModel to userDTO.
         ModelMapper modelMapper = new ModelMapper();
@@ -99,32 +111,34 @@ public class MessageController {
         MessageDTO messageDTO = modelMapper.map(messageRequestModel, MessageDTO.class);
 
         /// Send messageDTO to the userService to create our user into the database.
-        MessageDTO createdMessage = messageService.sendMessage(messageDTO);
+        ConversationDTO createdConversation = messageService.sendMessage(messageDTO);
 
         /// If createdUser is null return badRequest.
-        if (createdMessage == null)
+        if (createdConversation == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
         /// Map userDTO to UserResponseModel.
-        MessageResponseModel returnValue = modelMapper.map(createdMessage, MessageResponseModel.class);
-        returnValue.setRedirect("Inside MessageController.java");
+        ConversationResponseModel returnValue = modelMapper.map(createdConversation, ConversationResponseModel.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
 
     @DeleteMapping
-    public ResponseEntity<Boolean> deleteMessage(@RequestHeader(name = "Authorization") String token,
-            @RequestParam String messageId) {
+    public ResponseEntity<Boolean> deleteConversation(@RequestHeader(name = "Authorization") String token,
+            @RequestParam String conversationId) {
 
-        if (messageId == null)
+        String userId = getInformation(token);
+
+        if (conversationId == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 
-        Boolean returnValue = messageService.deleteMessage(messageId);
+        Boolean returnValue = messageService.deleteConversation(conversationId, userId);
 
         if (returnValue == false)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+
     }
 
 }

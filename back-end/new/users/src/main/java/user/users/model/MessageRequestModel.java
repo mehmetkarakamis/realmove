@@ -1,6 +1,10 @@
 package user.users.model;
 
+
+
 import javax.validation.constraints.NotBlank;
+
+
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,11 +13,11 @@ public class MessageRequestModel {
 
     @NotBlank
     @Getter @Setter
-    private Long fromUserId;
+    private String fromUserId;
     
     @NotBlank
     @Getter @Setter
-    private Long toUserId;
+    private String toUserId;
 
     @NotBlank
     @Getter @Setter
@@ -21,11 +25,6 @@ public class MessageRequestModel {
 
     @NotBlank
     @Getter @Setter
-    private String conversationId;
-
-    @Getter
-    @Setter
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
-    private Date dateTime;
+    private String advertId;
     
 }
