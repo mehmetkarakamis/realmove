@@ -157,6 +157,7 @@ requestAdverts = () => {
               image={require('./home.png')}
               width={1}
               height={1}
+              
               coordinate={{
                 latitude: marker.latitude,
                 longitude: marker.longitude

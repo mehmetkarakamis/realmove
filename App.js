@@ -17,7 +17,12 @@ import List from "./components/list";
 import Search from "./components/search";
 import Profile from "./components/profile";
 import AdvertDetails from "./components/advert-details";
+<<<<<<< Updated upstream
 import MyAdverts from "./components/my-adverts";
+=======
+import Messages from "./components/messages";
+import MessageDetails from "./components/message-details";
+>>>>>>> Stashed changes
 
 export default () => (
 	<>
@@ -33,7 +38,12 @@ export default () => (
 							<Stack.Screen component={Map} name="Map" />
 							<Stack.Screen component={Search} name="Search" />
 							<Stack.Screen component={Profile} name="Profile" />
+<<<<<<< Updated upstream
 							<Stack.Screen component={MyAdverts} name="MyAdverts" />
+=======
+							<Stack.Screen component={Messages} name="Messages" />
+							<Stack.Screen component={MessageDetails} name="MessageDetails" />
+>>>>>>> Stashed changes
 					</Stack.Navigator>
 				</NavigationContainer>
 			</View>

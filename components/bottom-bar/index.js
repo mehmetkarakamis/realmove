@@ -24,6 +24,7 @@ class BottomBar extends React.PureComponent {
 		if(event === 1) this.props.navigation.replace("Map");
 		if(event === 2) this.props.navigation.replace("Search");
 		if(event === 3) this.props.navigation.replace("Profile");
+		if(event === 4) this.props.navigation.replace("Messages");
 	}
 
 	render() {
@@ -33,6 +34,7 @@ class BottomBar extends React.PureComponent {
 				<BottomNavigationTab icon={mapIcon} title="Harita" />
 				<BottomNavigationTab icon={aramaIcon} title="Arama" />
 				<BottomNavigationTab icon={profilIcon} title="Profil" />
+				<BottomNavigationTab icon={profilIcon} title="Mesajlar" />
 			</BottomNavigation>
 		);
 	}

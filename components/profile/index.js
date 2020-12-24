@@ -162,6 +162,7 @@ class Profile extends React.PureComponent {
 				<TopNavigation title="Profil" />
 
 				<View style={CSS.container}>
+					<Button onPress={this.props.navigation.navigate("Messages")}>Mesajlar</Button>
 					<View style={CSS.pp_container}>
 						{this.state.profile.profilePicture ?
 						<Image source={{uri: this.state.profile.profilePicture}} style={CSS.pp} />
@@ -205,7 +206,7 @@ class Profile extends React.PureComponent {
 							data={this.state.profile.favorites}
 							renderItem={this.renderFavorites}
 						/>
-
+					
 					<Button onPress={this.saveProfile} size="small">Kaydet</Button>
 
 					<Button style={CSS.sign_out} onPress={this.signOut} size="small" status="danger">Çıkış Yap</Button>
