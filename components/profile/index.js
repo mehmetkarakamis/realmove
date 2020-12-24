@@ -31,9 +31,11 @@ class Profile extends React.PureComponent {
 			})
 			.then((response) => {
 				if(response.data.fullName === null) Toast.info("Kullanıcı bilgileri eksik! Lütfen tamamlayınız!");
-				this.setState({ profile: response.data });
+				this.setState({ profile: response.data }, () => {
+					this.requestAdverts(response.data.favorites);
+				});
 			})
-			.catch((e) => {
+			.catch(() => {
 				Toast.error("Profil getirilemedi!");
 			})
 			.finally(() => { this.setState({ loading: false }); });
@@ -42,17 +44,17 @@ class Profile extends React.PureComponent {
 
 	getOtherProfile = (id) => {
 		this.setState({ loading: true }, async() => {
-		axios.get("/users-ws/api/user/other/userDetails", {
-			params: { userId: id },
-			headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
-		})
-		.then((response) => {
-			this.setState({ profile: response.data });
-		})
-		.catch(() => {
-			Toast.error("Profil getirilemedi!");
-		})
-		.finally(() => { this.setState({ loading: false }); });
+			axios.get("/users-ws/api/user/other/userDetails", {
+				params: { userId: id },
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+			})
+			.then((response) => {
+				this.setState({ profile: response.data });
+			})
+			.catch(() => {
+				Toast.error("Profil getirilemedi!");
+			})
+			.finally(() => { this.setState({ loading: false }); });
 		});
 	}
 
@@ -65,34 +67,94 @@ class Profile extends React.PureComponent {
 		});
 	};
 
-	renderFavorites = ({ item, index }) => {
-		return <ListItem onPress={() => this.props.navigation.navigate("AdvertDetails", { id: item })} title={item} key={index} />
+	deleteFavorites = (id) => (
+		<Button size="small" onPress={() => this.deleteFav(id)}>Sil</Button>
+	)
+
+	deleteFav = (id) => {
+		this.setState({ loading: true }, async() => {
+			const data = new FormData();
+			data.append("advertId", id);
+			axios.patch("/users-ws/api/user/favorites", data, {
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+			})
+			.then(() => {
+				this.getProfile();
+			})
+			.catch(() => {
+				Toast.error("Favori silinemedi!");
+			});
+		});
 	}
 
-	saveProfile = async() => {
-		const data = new FormData();
-		data.append("fullName", this.state.profile.fullName);
-		data.append("phoneNumber", this.state.profile.phoneNumber);
-		data.append("profilePicture", {
-			name: this.pp?.fileName,
-			type: this.pp?.type,
-			uri: Platform.OS === "android" ? this.pp?.uri : this.pp?.uri.replace("file://", "")
+	renderFavorites = ({ item, index }) => {
+		try {
+			return <ListItem accessoryRight={() => this.deleteFavorites(item.advertId)} onPress={() => this.props.navigation.navigate("AdvertDetails", { id: item.advertId })} title={item.title} key={index} />
+		}
+		catch { return <></> }
+	}
+
+	replaceMyAdverts = () => {
+		this.props.navigation.replace("MyAdverts");
+	}
+
+	requestAdverts = (favorites) => {
+		this.setState({ loading: true }, async() => {
+			axios.get("/adverts-ws/api/advert/all", {
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
+			})
+			.then((response) => {
+				const favorites_new = response.data.reduce((accumulator, value) => {
+					if(favorites.includes(value.advertId)) {
+						accumulator.push({
+							advertId: value.advertId,
+							title: value.title
+						});
+					}
+					return accumulator;
+				}, []);
+				const profile = { ...this.state.profile, favorites: favorites_new };
+				this.setState({ profile });
+			})
+			.catch(() => {
+				Toast.error("Sunucuya bağlanırken hata ile karşılaşıldı!");
+			})
+			.finally(() => { this.setState({ loading: false }); });
 		});
-		axios.patch("/users-ws/api/user/userDetails", data, {
-			headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
-		})
-		.then(() => {
-			Toast.success("Bilgiler başarıyla güncellendi!");
-			this.props.navigation.replace("Profile");
-		})
-		.catch(() => {
-			Toast.error("Bilgiler güncellenemedi!");
-		})
+	}
+
+	saveProfile = () => {
+		this.setState({ loading: true }, async() => {
+			const data = new FormData();
+			data.append("fullName", this.state.profile.fullName);
+			data.append("phoneNumber", this.state.profile.phoneNumber);
+			data.append("profilePicture", {
+				name: this.pp.fileName,
+				type: this.pp.type,
+				uri: Platform.OS === "android" ? this.pp?.uri : this.pp?.uri.replace("file://", "")
+			});
+			axios.patch("/users-ws/api/user/userDetails", data, {
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+			})
+			.then(() => {
+				Toast.success("Bilgiler güncellendi!");
+				this.props.navigation.replace("Profile");
+			})
+			.catch(() => {
+				Toast.error("Bilgiler güncellenemedi!");
+			})
+			.finally(() => { this.setState({ loading: false }); });
+		});
 	}
 
 	setFullname = (event) => { this.setState({ profile: { ...this.state.profile, fullName: event } }); }
 
 	setPhoneNumber = (event) => { this.setState({ profile: { ...this.state.profile, phoneNumber: event } }); }
+
+	signOut = async() => {
+		AsyncStorage.removeItem("@token");
+		this.props.navigation.replace("Login");
+	}
 
 	render() {
 		return (
@@ -136,6 +198,8 @@ class Profile extends React.PureComponent {
 
 					{!this.props?.route?.params?.id &&
 					<>
+						<Button appearance="ghost" onPress={this.replaceMyAdverts}>İlanlarım</Button>
+
 						<Text category="p1" style={CSS.head}>Favoriler</Text>
 						<List
 							data={this.state.profile.favorites}
@@ -143,6 +207,8 @@ class Profile extends React.PureComponent {
 						/>
 
 					<Button onPress={this.saveProfile} size="small">Kaydet</Button>
+
+					<Button style={CSS.sign_out} onPress={this.signOut} size="small" status="danger">Çıkış Yap</Button>
 					</>
 					}
 				</View>
@@ -181,6 +247,9 @@ const CSS = StyleSheet.create({
 	},
 	head: {
 		marginBottom: "2%",
+		marginTop: "2%"
+	},
+	sign_out: {
 		marginTop: "2%"
 	}
 })

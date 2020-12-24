@@ -64,7 +64,6 @@ class Login extends React.PureComponent {
 			if(this.state.checkbox === false) throw String("Kullanım koşulları kabul edilmelidir!");
 		}
 		catch(error) {
-			console.log(error);
 			Toast.error(error);
 			return;
 		}

@@ -17,29 +17,28 @@ import List from "./components/list";
 import Search from "./components/search";
 import Profile from "./components/profile";
 import AdvertDetails from "./components/advert-details";
+import MyAdverts from "./components/my-adverts";
 
 export default () => (
 	<>
-	
 		<IconRegistry icons={EvaIconsPack} />
 		<ApplicationProvider {...eva} theme={eva.light}>
 			<View style={CSS.root}>
 				<NavigationContainer>
 					<Stack.Navigator screenOptions={{ headerShown: false }}>
-							
 							<Stack.Screen component={Login} name="Login" />
-							<Stack.Screen component={Map} name="Map" />
 							<Stack.Screen component={List} name="List" />
 							<Stack.Screen component={AdvertDetails} name="AdvertDetails" />
 							<Stack.Screen component={Add} name="Add" />
+							<Stack.Screen component={Map} name="Map" />
 							<Stack.Screen component={Search} name="Search" />
 							<Stack.Screen component={Profile} name="Profile" />
+							<Stack.Screen component={MyAdverts} name="MyAdverts" />
 					</Stack.Navigator>
 				</NavigationContainer>
 			</View>
 		</ApplicationProvider>
 		<Toast ref={(ref) => Toast.setRef(ref)} />
-		
 	</>
 );
 
