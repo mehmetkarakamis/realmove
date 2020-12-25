@@ -84,7 +84,9 @@ const CSS = StyleSheet.create({
 	},
 	property_image: {
 		height: 75,
-		width: 75
+		width: 75,
+		borderRadius: 150 / 2,
+		overflow: "hidden"
 	}
 });
 

@@ -39,11 +39,8 @@ class MessageDetails extends React.PureComponent {
 			})
 			.then((response) => {    
 				  this.setState({ messages:  response.data.messageList, advertId: response.data.advertId, toUserId: response.data.toUserId});
-                console.log(response.data.messageList);
 			})
 			.catch((err) => {
-                console.log(err);
-                console.log("aq");
 				Toast.error("Mesajlar getirilemedi!");
 			})
 			.finally(() => { this.setState({ loading: false }); });
@@ -64,7 +61,6 @@ class MessageDetails extends React.PureComponent {
 				this.getMessages(this.props.route?.params?.id);
 		})
 		.catch((err) => {
-			console.log(JSON.stringify(err.response), null, 2);
 			Toast.error("Mesajınız gönderilemedi!");
 		});
 	}
@@ -72,16 +68,11 @@ class MessageDetails extends React.PureComponent {
 	
 	requestUser = () => {
 		this.setState({ loading: true }, async() => {
-            console.log("reques user token")
-            console.log(await AsyncStorage.getItem("@token"));
 			axios.get("/users-ws/api/user", {
 				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
 			})
 			.then((response) => {
                 this.setState({ userId: response.data.userId });
-				console.log(response.data);
-				console.log("useridyavvv");
-				console.log(this.state.userId);
 			})
 			.catch(() => {
                 

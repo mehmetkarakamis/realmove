@@ -50,6 +50,7 @@ class Add extends React.Component {
 		this.state = {
 			loading: false,
 			// Data
+			advertId: null,
 			title: "",
 			city: new IndexPath(0),
 			district: new IndexPath(0),
@@ -72,6 +73,51 @@ class Add extends React.Component {
 			inTheSite: new IndexPath(0),
 			advertPictures: []
 		}
+	}
+
+	componentDidMount() {
+		if(this.props.route?.params?.id)
+			this.getAdvert(this.props.route.params.id);
+	}
+
+	getAdvert = (id) => {
+		this.setState({ loading: true }, async() => {
+			axios.get(`/adverts-ws/api/advert?advertId=${id}`, {
+				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+			})
+			.then((response) => {
+				this.setState({
+					advertId: response.data.advertId,
+					advertPictures: [],
+					title: response.data.title,
+					city: new IndexPath(0),
+					district: new IndexPath(6),
+					region: response.data.region,
+					price: String(response.data.price),
+					description: response.data.description,
+					advertType: new IndexPath(0),
+					squareMeter: String(response.data.squareMeter),
+					residentalType: response.data.residentalType,
+					numberOfRooms: response.data.numberOfRooms,
+					floorNumber: String(response.data.floorNumber),
+					buildingAge: String(response.data.buildingAge),
+					heatingType: response.data.heatingType,
+					numberOfFloors: String(response.data.numberOfFloors),
+					itemStatus: new IndexPath(0),
+					numberOfBathrooms: String(response.data.numberOfBathrooms),
+					status: new IndexPath(0),
+					studentOrSinglePerson: response.data.studentOrSinglePerson,
+					front: response.data.front,
+					inTheSite: new IndexPath(0),
+					latitude: response.data.latitude,
+					longitude: response.data.longitude
+				});
+			})
+			.catch(() => {
+				Toast.error("İlan getirilemedi!");
+			})
+			.finally(() => { this.setState({ loading: false }); });
+		});
 	}
 
 	handlePhotoSelect = () => {
@@ -112,19 +158,40 @@ class Add extends React.Component {
 				uri: Platform.OS === "android" ? picture.uri : picture.uri.replace("file://", "")
 			});
 		}
-		this.setState({ loading: true }, async() => {
-			axios.post("/adverts-ws/api/advert", data, {
-				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
-			})
-			.then((response) => {
-				Toast.success("İlan inceleme için gönderildi!");
-				this.props.navigation.navigate("AdvertDetails", { id: response.data.advertId });
-			})
-			.catch(() => {
-				Toast.error("İlan eklenemedi!");
-				this.setState({ loading: false });
+		if(!this.state.advertId) {
+			this.setState({ loading: true }, async() => {
+				axios.post("/adverts-ws/api/advert", data, {
+					headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+				})
+				.then((response) => {
+					Toast.success("İlan inceleme için gönderildi!");
+					this.props.navigation.navigate("AdvertDetails", { id: response.data.advertId });
+				})
+				.catch(() => {
+					Toast.error("İlan eklenemedi!");
+					this.setState({ loading: false });
+				});
 			});
-		});
+		}
+		else {
+			data.append("advertId", this.state.advertId);
+			data.append("latitude", this.state.latitude);
+			data.append("longitude", this.state.longitude);
+			data.append("validate", "1");
+			this.setState({ loading: true }, async() => {
+				axios.patch("/adverts-ws/api/advert", data, {
+					headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}` }
+				})
+				.then((response) => {
+					Toast.success("İlan başarıyla güncellendi!");
+					this.props.navigation.navigate("AdvertDetails", { id: response.data.advertId });
+				})
+				.catch(() => {
+					Toast.error("İlan güncellenemedi!");
+					this.setState({ loading: false });
+				});
+			});
+		}
 	}
 
 	setTitle = (event) => { this.setState({ title: event }); }
@@ -373,7 +440,12 @@ class Add extends React.Component {
 
 						<View style={CSS.button_container}>
 							<Button onPress={this.handlePhotoSelect} size="small" style={CSS.button}>Fotoğraf Yükle</Button>
+							{this.state.advertId ?
+							<Button onPress={this.requestAdd} size="small" style={CSS.button}>Kaydet</Button>
+							:
 							<Button onPress={this.requestAdd} size="small" style={CSS.button}>Gönder</Button>
+							}
+							
 						</View>
 					</View>
 				</ScrollView>

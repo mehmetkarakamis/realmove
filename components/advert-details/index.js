@@ -64,19 +64,6 @@ class AdvertDetails extends React.PureComponent {
 
 		this.setState({visible: true});
 		const data = new FormData();
-
-		console.log("fromUserId");
-		console.log(this.state.userId);
-
-		console.log("toUserId");
-		console.log(this.state.advert.userId);
-		
-		console.log("Content");
-		console.log(this.state.message);
-
-		console.log("advertId");
-		console.log(this.state.advert.advertId);
-
 		data.append("fromUserId", this.state.userId);
 		data.append("toUserId", this.state.advert.userId);
 		data.append("Content", this.state.message);
@@ -89,23 +76,17 @@ class AdvertDetails extends React.PureComponent {
 				this.setState({visible: false});
 		})
 		.catch((err) => {
-			console.log(JSON.stringify(err.response), null, 2);
 			Toast.error("Mesajınız gönderilemedi!");
 		});
 	}
 
 	requestUser = () => {
 		this.setState({ loading: true }, async() => {
-            console.log("reques user token")
-            console.log(await AsyncStorage.getItem("@token"));
 			axios.get("/users-ws/api/user", {
 				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
 			})
 			.then((response) => {
                 this.setState({ userId: response.data.userId });
-				console.log(response.data);
-				console.log("useridyavvv");
-				console.log(this.state.userId);
 			})
 			.catch(() => {
                 

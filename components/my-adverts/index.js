@@ -25,14 +25,14 @@ class MyAdverts extends React.Component {
 		this.setState({ loading: true }, async() => {
 			const data = new FormData();
 			data.append("advertId", id);
-			axios.delete("/adverts-ws/api/advert", data, {
+			axios.delete("/adverts-ws/api/advert?advertId="+id, {
 				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
 			})
 			.then(() => {
 				Toast.success("İlan başarıyla silindi!");
 				this.getUserId();
 			})
-			.catch(() => {
+			.catch((e) => {
 				Toast.error("İlan silinirken hata ile karşılaşıldı!");
 			})
 			.finally(() => { this.setState({ loading: false }); });
@@ -55,7 +55,10 @@ class MyAdverts extends React.Component {
 	}
 
 	renderRight = (id) => () => (
-		<Button onPress={() => this.delete(id)} size="small" status="danger">Sil</Button>
+		<>
+			<Button style={CSS.update} onPress={() => this.props.navigation.replace("Add", { id })} size="small">Güncelle</Button>
+			<Button onPress={() => this.delete(id)} size="small" status="danger">Sil</Button>
+		</>
 	);
 
 	requestAdverts = (user_id) => {
@@ -72,6 +75,7 @@ class MyAdverts extends React.Component {
 			.finally(() => { this.setState({ loading: false }); });
 		});
 	}
+
 
 	render() {
 		return (
@@ -107,6 +111,9 @@ const CSS = StyleSheet.create({
 	property_image: {
 		height: 75,
 		width: 75
+	},
+	update: {
+		marginRight: "2%"
 	}
 });
 

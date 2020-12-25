@@ -70,8 +70,6 @@ _requestLocation = () => {
               currentRegion: location,
               loading: false,
           });
-          console.log("current");
-          console.log(this.state.currentRegion);
         
       })
       .catch(ex => {
@@ -99,9 +97,7 @@ _requestLocation = () => {
 
 
 componentDidMount() {
-  console.log("girdi");
   this.requestAdverts();
-  console.log("çıktı");
 
 
   GetLocation.getCurrentPosition({
@@ -109,7 +105,6 @@ componentDidMount() {
     timeout: 15000,
   })
 .then(location => {
-    console.log(location);
     this.setState({latitude: location.latitude, longitude: location.longitude});
 
 })

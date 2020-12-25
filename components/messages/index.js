@@ -29,14 +29,11 @@ class Messages extends React.Component {
 
     requestUser = () => {
 		this.setState({ loading: true }, async() => {
-            console.log("reques user token")
-            console.log(await AsyncStorage.getItem("@token"));
 			axios.get("/users-ws/api/user", {
 				headers: { "Authorization": `Bearer ${await AsyncStorage.getItem("@token")}`}
 			})
 			.then((response) => {
                 this.setState({ user_id: response.data.userId });
-                console.log(response.data);
                 this.requestMessages();
 			})
 			.catch(() => {
@@ -54,10 +51,8 @@ class Messages extends React.Component {
             })
 			.then((response) => {
                 this.setState({ messages: response.data });
-                console.log(response.data);
 			})
 			.catch(() => {
-                console.log("hataaaa");
 				Toast.error("Sunucuya bağlanırken hata ile karşılaşıldı!");
 			})
 			.finally(() => { this.setState({ loading: false }); });
