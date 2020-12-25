@@ -18,6 +18,10 @@ const mapIcon = (props) => (
 	<Icon name="map" {...props} />
 );
 
+const messageIcon = (props) => (
+	<Icon name="maximize-outline" {...props} />
+);
+
 class BottomBar extends React.PureComponent {
 	setSelectedIndex = (event) => {
 		if(event === 0) this.props.navigation.replace("List");
@@ -34,7 +38,7 @@ class BottomBar extends React.PureComponent {
 				<BottomNavigationTab icon={mapIcon} title="Harita" />
 				<BottomNavigationTab icon={aramaIcon} title="Arama" />
 				<BottomNavigationTab icon={profilIcon} title="Profil" />
-				<BottomNavigationTab icon={profilIcon} title="Mesajlar" />
+				<BottomNavigationTab icon={messageIcon} title="Mesajlar" />
 			</BottomNavigation>
 		);
 	}

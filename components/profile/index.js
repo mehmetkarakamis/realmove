@@ -162,7 +162,6 @@ class Profile extends React.PureComponent {
 				<TopNavigation title="Profil" />
 
 				<View style={CSS.container}>
-					<Button onPress={this.props.navigation.navigate("Messages")}>Mesajlar</Button>
 					<View style={CSS.pp_container}>
 						{this.state.profile.profilePicture ?
 						<Image source={{uri: this.state.profile.profilePicture}} style={CSS.pp} />
